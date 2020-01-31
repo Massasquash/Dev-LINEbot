@@ -4,7 +4,8 @@ var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
 function doPost(e) {
-  getMessage(e)
+  getMessage(e);
+  outputLog(e);
 }
 
 function getMessage(e){
@@ -13,14 +14,27 @@ function getMessage(e){
   if(typeof replyToken === 'undefined'){
     return;
   };
+
   var messageText = event.message.text;
-  
-  reply(replyToken, messageText)
+  var cache = CacheService.getScriptCache();
+  var type = cache.get(type);
+
+  if(messageText.match("おつかれ")){
+
+    
+
+  }else if(messageText.match("履歴")){
+
+
+  }else{
+    message = "【READ ME】\n「おつかれ」と入れてみてください。日報を入力できます。\n「履歴」と入れるとカレンダー・シートを送ります"
+    reply(replyToken, message);
+  };
 }
 
 
 // ラインにメッセージを返す処理。getMessage()関数からreplyMessageからreplyMessageを引き継ぎ呼び出される。
-function reply(replyToken, messageText){
+function reply(replyToken, message){
 
   var url = "https://api.line.me/v2/bot/message/reply";
   var message = {
@@ -28,7 +42,7 @@ function reply(replyToken, messageText){
     "messages" : [
       {
         "type" : "text",
-        "text" : messageText //ラインに送られるメッセージ。replyMessageはgetMessage()関数での処理で決定する
+        "text" : message //ラインに送られるメッセージ。replyMessageはgetMessage()関数での処理で決定する
       }
     ]
   };
@@ -42,7 +56,7 @@ function reply(replyToken, messageText){
     "payload" : JSON.stringify(message)
   };
 
-  UrlFetchApp.fetch(url, options)
+  UrlFetchApp.fetch(url, options);
 
 }
 
@@ -55,4 +69,3 @@ function outputLog(text){
     [new Date(), text]
   );
 }
-
