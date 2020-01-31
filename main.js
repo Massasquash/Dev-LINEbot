@@ -5,7 +5,6 @@ var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
 function doPost(e) {
   getMessage(e)
-  outputLog(e)
 }
 
 function getMessage(e){
@@ -48,15 +47,6 @@ function reply(replyToken, messageText){
 }
 
 
-function follow(e){
-
-}
-
-function unfollow(e){
-
-}
-
-
 
 //スプレッドシートにログを表示するためのもの
 function outputLog(text){
@@ -65,3 +55,4 @@ function outputLog(text){
     [new Date(), text]
   );
 }
+
