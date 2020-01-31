@@ -28,11 +28,10 @@ function getMessage(e){
   }else if(messageText.match("履歴")){
     var message1 = "カレンダー\nhttps://calendar.google.com/calendar/embed?src=ohsakifarm%40gmail.com&ctz=Asia%2FTokyo";
     var message2 = "シート\nhttps://docs.google.com/spreadsheets/d/1wf9QCy-5v5Qi9i2Qiiqg3ZxdLkoR0OHIRyG9N_kmldw/edit?usp=sharing";
-    reply(replyToken, message1);
-    reply(replyToken, message2);
+    replyMessagesreplyToken, message1, message2);
 
   }else{
-    message = "【READ ME】\n●「おつかれ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
+    var message = "【READ ME】\n●「おつかれ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
     reply(replyToken, message);
   };
 }
@@ -48,6 +47,35 @@ function reply(replyToken, message){
       {
         "type" : "text",
         "text" : message
+      }
+    ]
+  };
+
+  var options = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "Authorization" : "Bearer " + CHANNEL_ACCESS_TOKEN
+    },
+    "payload" : JSON.stringify(message)
+  };
+
+  UrlFetchApp.fetch(url, options);
+}
+
+
+// ラインに二つのメッセージを返す処理。
+function replyMessages(replyToken, message1, message2){
+
+  var url = "https://api.line.me/v2/bot/message/reply";
+  var message = {
+    "replyToken" : replyToken,
+    "messages" : [{
+        "type" : "text",
+        "text" : message1
+      },{
+        "type" : "text",
+        "text" : message2
       }
     ]
   };
