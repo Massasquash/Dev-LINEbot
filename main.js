@@ -17,7 +17,6 @@ function getMessage(e){
 
   var messageText = event.message.text;
   var cache = CacheService.getScriptCache();
-  var type = cache.get(type);
 
   if(messageText.match("おつかれ")){
 
@@ -27,13 +26,13 @@ function getMessage(e){
 
 
   }else{
-    message = "【READ ME】\n「おつかれ」と入れてみてください。日報を入力できます。\n「履歴」と入れるとカレンダー・シートを送ります"
+    message = "【READ ME】\n●「おつかれ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
     reply(replyToken, message);
   };
 }
 
 
-// ラインにメッセージを返す処理。getMessage()関数からreplyMessageからreplyMessageを引き継ぎ呼び出される。
+// ラインにメッセージを返す処理。
 function reply(replyToken, message){
 
   var url = "https://api.line.me/v2/bot/message/reply";
@@ -42,7 +41,7 @@ function reply(replyToken, message){
     "messages" : [
       {
         "type" : "text",
-        "text" : message //ラインに送られるメッセージ。replyMessageはgetMessage()関数での処理で決定する
+        "text" : message
       }
     ]
   };
