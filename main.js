@@ -26,8 +26,8 @@ function getMessage(e){
     
 
   }else if(messageText.match("履歴")){
-    message1 = "カレンダー\nhttps://calendar.google.com/calendar/embed?src=ohsakifarm%40gmail.com&ctz=Asia%2FTokyo"
-    message2 = "シート\nhttps://docs.google.com/spreadsheets/d/1wf9QCy-5v5Qi9i2Qiiqg3ZxdLkoR0OHIRyG9N_kmldw/edit?usp=sharing"
+    var message1 = "カレンダー\nhttps://calendar.google.com/calendar/embed?src=ohsakifarm%40gmail.com&ctz=Asia%2FTokyo"
+    var message2 = "シート\nhttps://docs.google.com/spreadsheets/d/1wf9QCy-5v5Qi9i2Qiiqg3ZxdLkoR0OHIRyG9N_kmldw/edit?usp=sharing"
     reply(replyToken, message1);
     reply(replyToken, message2);
 
@@ -62,7 +62,6 @@ function reply(replyToken, message){
   };
 
   UrlFetchApp.fetch(url, options);
-
 }
 
 
