@@ -88,7 +88,7 @@ function replyMessages(replyToken, message1, message2){
     "method" : "post",
     "headers" : {
       "Content-Type" : "application/json",
-      "Authorization" : "Bearer " + CHANNEL_ACCESS_TOKEN
+      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
     },
     "payload" : JSON.stringify(message)
   };
