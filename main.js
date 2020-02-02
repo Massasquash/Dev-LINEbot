@@ -1,8 +1,17 @@
-var CHANNEL_ACCESS_TOKEN = "rl+DTHhZ8PyTgSFeeiD30an9Ts6VU1OP1v+VNuYfR1tyAT/muNfhmFgLioDvRND+N25Cma6vE9ijuIHvTasPukgEUefYQFy45rR+L941wbMNoginFfWT/+vA0WDWfddN0r99dHqfZhuFY5mqbffXygdB04t89/1O/w1cDnyilFU=";
+//スクリプトプロパティの読み込み
+var CHANNEL_ACCESS_TOKEN = PropertiesService.getScriptProperties().getProperty('CHANNEL_ACCESS_TOKEN');
+var CALENDAR_ID = PropertiesService.getScriptProperties().getProperty('CALENDAR_ID');
+var SPREADSHEET_ID = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
 
+var CALENDAR_URL = PropertiesService.getScriptProperties().getProperty('CALENDAR_URL');
+var SPREADSHEET_URL = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_URL');
+
+//Googleサービス読み混み
 var ssForLogs = SpreadsheetApp.getActiveSpreadsheet();
-var calendar = CalendarApp.getCalendarById("ohsakifarm@gmail.com");
-var spreadsheet = SpreadsheetApp.openById("1wf9QCy-5v5Qi9i2Qiiqg3ZxdLkoR0OHIRyG9N_kmldw");
+var calendar = CalendarApp.getCalendarById(CALENDAR_ID);
+var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
 function doPost(e) {
@@ -26,9 +35,9 @@ function getMessage(e){
     
 
   }else if(messageText.match("履歴")){
-    var message1 = "カレンダー\nhttps://calendar.google.com/calendar/embed?src=ohsakifarm%40gmail.com&ctz=Asia%2FTokyo";
-    var message2 = "シート\nhttps://docs.google.com/spreadsheets/d/1wf9QCy-5v5Qi9i2Qiiqg3ZxdLkoR0OHIRyG9N_kmldw/edit?usp=sharing";
-    replyMessagesreplyToken, message1, message2);
+    var message1 = "カレンダー\n" + CALENDAR_URL;
+    var message2 = "シート\n" + SPREADSHEET_URL;
+    replyMessages(replyToken, message1, message2);
 
   }else{
     var message = "【READ ME】\n●「おつかれ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
