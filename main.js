@@ -1,15 +1,10 @@
 //スクリプトプロパティの読み込み
-var CHANNEL_ACCESS_TOKEN = PropertiesService.getScriptProperties().getProperty('CHANNEL_ACCESS_TOKEN');
-var CALENDAR_ID = PropertiesService.getScriptProperties().getProperty('CALENDAR_ID');
-var SPREADSHEET_ID = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
-
-var CALENDAR_URL = PropertiesService.getScriptProperties().getProperty('CALENDAR_URL');
-var SPREADSHEET_URL = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_URL');
+var prop = PropertiesService.getScriptProperties().getProperties();
 
 //Googleサービス読み混み
 var ssForLogs = SpreadsheetApp.getActiveSpreadsheet();
-var calendar = CalendarApp.getCalendarById(CALENDAR_ID);
-var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
+var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
 
 
 
@@ -35,8 +30,8 @@ function getMessage(e){
     
 
   }else if(messageText.match("履歴")){
-    var message1 = "カレンダー\n" + CALENDAR_URL;
-    var message2 = "シート\n" + SPREADSHEET_URL;
+    var message1 = "カレンダー\n" + prop.CALENDAR_URL;
+    var message2 = "シート\n" + prop.SPREADSHEET_URL;
     replyMessages(replyToken, message1, message2);
 
   }else{
@@ -64,7 +59,7 @@ function reply(replyToken, message){
     "method" : "post",
     "headers" : {
       "Content-Type" : "application/json",
-      "Authorization" : "Bearer " + CHANNEL_ACCESS_TOKEN
+      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
     },
     "payload" : JSON.stringify(message)
   };
