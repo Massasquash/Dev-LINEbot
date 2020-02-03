@@ -25,9 +25,9 @@ function getMessage(e){
   var cache = CacheService.getScriptCache();
 
   // ユーザーから受け取ったメッセージを部分一致で処理を分岐
-  if(messageText.match("おつかれ")){
-
-    
+  if(messageText.match("おつかれ"||"お疲れ")){
+    var quickReplymessage = "カテゴリを選択してください！";
+    quickReply(replyToken, quickReplymessage);
 
   }else if(messageText.match("履歴")){
     var message1 = "カレンダー\n" + prop.CALENDAR_URL;
@@ -43,7 +43,6 @@ function getMessage(e){
 
 // ラインにメッセージを返す処理。
 function reply(replyToken, message){
-
   var url = "https://api.line.me/v2/bot/message/reply";
   var message = {
     "replyToken" : replyToken,
@@ -70,7 +69,6 @@ function reply(replyToken, message){
 
 // ラインに二つのメッセージを返す処理。
 function replyMessages(replyToken, message1, message2){
-
   var url = "https://api.line.me/v2/bot/message/reply";
   var message = {
     "replyToken" : replyToken,
@@ -96,6 +94,51 @@ function replyMessages(replyToken, message1, message2){
   UrlFetchApp.fetch(url, options);
 }
 
+
+// クイックリプライを送信する処理
+function quickReply(replyToken, quickReplymessage){
+  var url = "https://api.line.me/v2/bot/message/reply";
+  var items = [
+    {
+      "type" : "action",
+      "action" :{
+        "type" : "message",
+        "label" : "QR１",
+        "text" : "QR1が選択されました。"
+      }
+    },{
+      "type" : "action",
+      "action" :{
+        "type" : "message",
+        "label" : "QR2",
+        "text" : "QR2が選択されました。"
+      }
+    }
+  ];
+
+  var message = {
+    "replyToken" : replyToken,
+    "messages" : [
+      {
+        "type" : "text",
+        "text" : quickReplymessage,
+        "quickReply" : items
+      }
+    ]
+  };
+
+  var options = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
+    },
+    "payload" : JSON.stringify(message)
+  };
+
+  UrlFetchApp.fetch(url, options);
+
+}
 
 
 //スプレッドシートにログを表示するためのもの
