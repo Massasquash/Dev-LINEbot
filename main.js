@@ -25,9 +25,9 @@ function getMessage(e){
   var cache = CacheService.getScriptCache();
 
   // ユーザーから受け取ったメッセージを部分一致で処理を分岐
-  if(messageText.match("おつかれ"||"お疲れ")){
+  if(messageText.match("おつかれ")||messageText.match("疲")){
     var quickReplymessage = "カテゴリを選択してください！";
-    quickReply(replyToken, quickReplymessage);
+    quickReply(quickReplymessage);
 
   }else if(messageText.match("履歴")){
     var message1 = "カレンダー\n" + prop.CALENDAR_URL;
@@ -96,8 +96,8 @@ function replyMessages(replyToken, message1, message2){
 
 
 // クイックリプライを送信する処理
-function quickReply(replyToken, quickReplymessage){
-  var url = "https://api.line.me/v2/bot/message/reply";
+function quickReply(quickReplymessage){
+  var url = "https://api.line.me/v2/bot/message/push";
   var items = [
     {
       "type" : "action",
@@ -117,14 +117,15 @@ function quickReply(replyToken, quickReplymessage){
   ];
 
   var message = {
-    "replyToken" : replyToken,
+    "to" : prop.USER_ID,
     "messages" : [
       {
         "type" : "text",
         "text" : quickReplymessage,
         "quickReply" : items
       }
-    ]
+    ],
+    "notificationDisabled" : false // trueだとユーザーに通知されない
   };
 
   var options = {
