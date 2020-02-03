@@ -97,35 +97,36 @@ function replyMessages(replyToken, message1, message2){
 
 // クイックリプライを送信する処理
 function quickReply(quickReplymessage){
-  var url = "https://api.line.me/v2/bot/message/push";
-  var items = [
-    {
-      "type" : "action",
-      "action" :{
-        "type" : "message",
-        "label" : "QR１",
-        "text" : "QR1が選択されました。"
-      }
-    },{
-      "type" : "action",
-      "action" :{
-        "type" : "message",
-        "label" : "QR2",
-        "text" : "QR2が選択されました。"
-      }
-    }
-  ];
+  var url = "https://api.line.me/v2/bot/message/reply";
 
   var message = {
-    "to" : prop.USER_ID,
+    "replyToken" : replyToken,
     "messages" : [
       {
         "type" : "text",
         "text" : quickReplymessage,
-        "quickReply" : items
+        "quickReply" :{
+           "items" :[
+            {
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR１",
+                "text" : "QR1が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR2",
+                "text" : "QR2が選択されました。"
+              }
+            }
+          ]
+        }
       }
     ],
-    "notificationDisabled" : false // trueだとユーザーに通知されない
+//    "notificationDisabled" : false // trueだとユーザーに通知されない
   };
 
   var options = {
