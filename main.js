@@ -28,6 +28,8 @@ function getMessage(e){
   if(messageText.match("おつ")||messageText.match("疲")){
     datetimePicker(replyToken);
 
+    
+
   }else if(messageText.match("履歴")){
     var message1 = "カレンダー\n" + prop.CALENDAR_URL;
     var message2 = "シート\n" + prop.SPREADSHEET_URL;
@@ -94,7 +96,7 @@ function replyMessages(replyToken, message1, message2){
 }
 
 
-// 日時選択アクションを送る処理
+// ボタンテンプレートを出してから日時選択アクションを送る処理
 function datetimePicker(replyToken){
   var url = "https://api.line.me/v2/bot/message/reply";
 
@@ -102,10 +104,32 @@ function datetimePicker(replyToken){
     "replyToken" : replyToken,
     "messages" : [
       {
-        "type": "datetimepicker",
-        "label": "何日の日報？",
-        "data": "action=settime",
-        "mode": "date"
+        "type" : "template",
+        "altText" : "日報を入力する？",
+        "text" : "日報登録",
+        "template" : {
+          "type" : "buttons",
+          "title" : "日報登録",
+          "text" : "選んでね",
+          "defaultAction" : {
+            "type": "datetimepicker",
+            "label": "はい",
+            "data": "action=settime",
+            "mode": "date"
+          },
+          "actions" :[
+            {
+              "type": "datetimepicker",
+              "label": "はい",
+              "data": "action=settime",
+              "mode": "date"
+            },{
+              "type" : "postback",
+              "label" : "やっぱりやめる",
+              "data" : "action=cancel"
+            }
+          ]
+        }
       }
     ]
 //  "notificationDisabled" : false // trueだとユーザーに通知されない
@@ -116,10 +140,16 @@ function datetimePicker(replyToken){
     "headers" : {
       "Content-Type" : "application/json",
       "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-    },
+    }, 
     "payload" : JSON.stringify(message)
   };
   UrlFetchApp.fetch(url, options);
+
+  var pbEvent = req.body.event[0];
+  if(pbEvent.type === 'postback'){
+    var dateWork = pbEvent.postback.params.date;
+    reply(replyToken, dateWork);
+  };
 }
 
 
