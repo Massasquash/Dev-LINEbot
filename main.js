@@ -35,7 +35,7 @@ function getMessage(e){
     replyMessages(replyToken, message1, message2);
 
   }else{
-    var message = "【READ ME】\n●「おつかれ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
+    var message = "【READ ME】\n●「おつかれ/お疲れ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
     reply(replyToken, message);
   };
 }
@@ -95,6 +95,36 @@ function replyMessages(replyToken, message1, message2){
 }
 
 
+// 日時選択アクションを送る処理
+function datetimePicker(replyToken){
+  var url = "https://api.line.me/v2/bot/message/reply";
+
+  var message = {
+    "replyToken" : replyToken,
+    "messages" : [
+      {
+        "type": "datetimepicker",
+        "label": "何日の日報？",
+        "data": "action=settime",
+        "mode": "date"
+      }
+    ]
+//  "notificationDisabled" : false // trueだとユーザーに通知されない
+  };
+
+  var options = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
+    },
+    "payload" : JSON.stringify(message)
+  };
+  UrlFetchApp.fetch(url, options);
+}
+
+
+
 // クイックリプライを送信する処理
 function quickReply(replyToken, quickReplymessage){
   var url = "https://api.line.me/v2/bot/message/reply";
@@ -110,9 +140,10 @@ function quickReply(replyToken, quickReplymessage){
             {
               "type" : "action",
               "action" :{
-                "type" : "message",
-                "label" : "QR１",
-                "text" : "QR1が選択されました。"
+                "type" : "postback",
+                "label" : "敷地内作業",
+                "data" : "action=setdata1",
+                "displayText" : "【WORK登録】敷地内選択"
               }
             },{
               "type" : "action",
@@ -121,11 +152,39 @@ function quickReply(replyToken, quickReplymessage){
                 "label" : "QR2",
                 "text" : "QR2が選択されました。"
               }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR3",
+                "text" : "QR3が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR4",
+                "text" : "QR4が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR5",
+                "text" : "QR5が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR6",
+                "text" : "QR6が選択されました。"
+              }
             }
           ]
         }
       }
-    ],
+    ]
 //    "notificationDisabled" : false // trueだとユーザーに通知されない
   };
 
