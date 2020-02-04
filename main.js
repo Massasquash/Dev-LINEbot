@@ -26,8 +26,7 @@ function getMessage(e){
 
   // ユーザーから受け取ったメッセージを部分一致で処理を分岐
   if(messageText.match("おつ")||messageText.match("疲")){
-    var quickReplymessage = "カテゴリを選択してください！";
-    quickReply(replyToken, quickReplymessage);
+    datetimePicker(replyToken);
 
   }else if(messageText.match("履歴")){
     var message1 = "カレンダー\n" + prop.CALENDAR_URL;
@@ -125,81 +124,81 @@ function datetimePicker(replyToken){
 
 
 
-// クイックリプライを送信する処理
-function quickReply(replyToken, quickReplymessage){
-  var url = "https://api.line.me/v2/bot/message/reply";
+// // クイックリプライを送信する処理
+// function quickReply(replyToken, quickReplymessage){
+//   var url = "https://api.line.me/v2/bot/message/reply";
 
-  var message = {
-    "replyToken" : replyToken,
-    "messages" : [
-      {
-        "type" : "text",
-        "text" : quickReplymessage,
-        "quickReply" :{
-           "items" :[
-            {
-              "type" : "action",
-              "action" :{
-                "type" : "postback",
-                "label" : "敷地内作業",
-                "data" : "action=setdata1",
-                "displayText" : "【WORK登録】敷地内選択"
-              }
-            },{
-              "type" : "action",
-              "action" :{
-                "type" : "message",
-                "label" : "QR2",
-                "text" : "QR2が選択されました。"
-              }
-            },{
-              "type" : "action",
-              "action" :{
-                "type" : "message",
-                "label" : "QR3",
-                "text" : "QR3が選択されました。"
-              }
-            },{
-              "type" : "action",
-              "action" :{
-                "type" : "message",
-                "label" : "QR4",
-                "text" : "QR4が選択されました。"
-              }
-            },{
-              "type" : "action",
-              "action" :{
-                "type" : "message",
-                "label" : "QR5",
-                "text" : "QR5が選択されました。"
-              }
-            },{
-              "type" : "action",
-              "action" :{
-                "type" : "message",
-                "label" : "QR6",
-                "text" : "QR6が選択されました。"
-              }
-            }
-          ]
-        }
-      }
-    ]
-//    "notificationDisabled" : false // trueだとユーザーに通知されない
-  };
+//   var message = {
+//     "replyToken" : replyToken,
+//     "messages" : [
+//       {
+//         "type" : "text",
+//         "text" : quickReplymessage,
+//         "quickReply" :{
+//            "items" :[
+//             {
+//               "type" : "action",
+//               "action" :{
+//                 "type" : "postback",
+//                 "label" : "敷地内作業",
+//                 "data" : "action=setdata1",
+//                 "displayText" : "【WORK登録】敷地内選択"
+//               }
+//             },{
+//               "type" : "action",
+//               "action" :{
+//                 "type" : "message",
+//                 "label" : "QR2",
+//                 "text" : "QR2が選択されました。"
+//               }
+//             },{
+//               "type" : "action",
+//               "action" :{
+//                 "type" : "message",
+//                 "label" : "QR3",
+//                 "text" : "QR3が選択されました。"
+//               }
+//             },{
+//               "type" : "action",
+//               "action" :{
+//                 "type" : "message",
+//                 "label" : "QR4",
+//                 "text" : "QR4が選択されました。"
+//               }
+//             },{
+//               "type" : "action",
+//               "action" :{
+//                 "type" : "message",
+//                 "label" : "QR5",
+//                 "text" : "QR5が選択されました。"
+//               }
+//             },{
+//               "type" : "action",
+//               "action" :{
+//                 "type" : "message",
+//                 "label" : "QR6",
+//                 "text" : "QR6が選択されました。"
+//               }
+//             }
+//           ]
+//         }
+//       }
+//     ]
+// //    "notificationDisabled" : false // trueだとユーザーに通知されない
+//   };
 
-  var options = {
-    "method" : "post",
-    "headers" : {
-      "Content-Type" : "application/json",
-      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-    },
-    "payload" : JSON.stringify(message)
-  };
+//   var options = {
+//     "method" : "post",
+//     "headers" : {
+//       "Content-Type" : "application/json",
+//       "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
+//     },
+//     "payload" : JSON.stringify(message)
+//   };
 
-  UrlFetchApp.fetch(url, options);
+//   UrlFetchApp.fetch(url, options);
 
-}
+// }
 
 
 //スプレッドシートにログを表示するためのもの
