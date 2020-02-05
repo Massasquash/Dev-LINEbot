@@ -10,8 +10,17 @@ var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
 function doPost(e) {
+//   //デバッグ用ログを表示する
+//   outputLog("0", e.postData.contents);
+//   outputLog("1", JSON.parse(e.postData.contents));
+//   outputLog("2", JSON.parse(e.postData.contents).events[0]);
+//  outputLog("3", JSON.parse(e.postData.contents).events[0].message.text);
+//   outputLog("4", JSON.parse(e.postData.getDataAsString()));
+//   outputLog("5", JSON.parse(e.postData.getDataAsString()).events[0]);
+//   outputLog("6", JSON.parse(e.postData.getDataAsString()).events[0].postback.params);
+//   outputLog("7", JSON.parse(e.postData.contents).events[0].postback.params);
+
   getMessage(e);
-  outputLog(e);
 }
 
 function getMessage(e){
@@ -23,7 +32,7 @@ function getMessage(e){
 
   var messageText = event.message.text;
   var cache = CacheService.getScriptCache();
-
+  
   // ユーザーから受け取ったメッセージを部分一致で処理を分岐
   if(messageText.match("おつ")||messageText.match("疲")){
     datetimePicker(replyToken);
@@ -148,7 +157,7 @@ function datetimePicker(replyToken){
   var pbEvent = req.body.event[0];
   if(pbEvent.type === 'postback'){
     var dateWork = pbEvent.postback.params.date;
-    reply(replyToken, dateWork);
+    outputLog(dateWork);
   };
 }
 
@@ -232,9 +241,10 @@ function datetimePicker(replyToken){
 
 
 //スプレッドシートにログを表示するためのもの
-function outputLog(text){
+function outputLog(num, text){
   var sheetName = "logs";
   ssForLogs.getSheetByName(sheetName).appendRow(
-    [new Date(), text]
+    [new Date(),num, text]
   );
+  return;
 }
