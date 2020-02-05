@@ -37,8 +37,6 @@ function doPost(e) {
 };
 
 
-}
-
 function getMessage(event, replyToken){
   var messageText = event.message.text;
   
