@@ -14,30 +14,37 @@ function doPost(e) {
 //   outputLog("0", e.postData.contents);
 //   outputLog("1", JSON.parse(e.postData.contents));
 //   outputLog("2", JSON.parse(e.postData.contents).events[0]);
-//  outputLog("3", JSON.parse(e.postData.contents).events[0].message.text);
+//   outputLog("3", JSON.parse(e.postData.contents).events[0].message.text);
 //   outputLog("4", JSON.parse(e.postData.getDataAsString()));
 //   outputLog("5", JSON.parse(e.postData.getDataAsString()).events[0]);
 //   outputLog("6", JSON.parse(e.postData.getDataAsString()).events[0].postback.params);
 //   outputLog("7", JSON.parse(e.postData.contents).events[0].postback.params);
 
-  getMessage(e);
-}
-
-function getMessage(e){
   var event = JSON.parse(e.postData.contents).events[0];
   var replyToken = event.replyToken;
   if(typeof replyToken === 'undefined'){
     return;
-  };
+  }
 
+  var cache = ChacheService.getScriptCache();
+  var order = cache.get("order");
+
+  if(event.type == "message"){
+    getMessage(event, replyToken);
+  } else if(event.type == "postback"){
+    getWork(event, replyToken);
+  }
+};
+
+
+}
+
+function getMessage(event, replyToken){
   var messageText = event.message.text;
-  var cache = CacheService.getScriptCache();
   
   // ユーザーから受け取ったメッセージを部分一致で処理を分岐
   if(messageText.match("おつ")||messageText.match("疲")){
     datetimePicker(replyToken);
-
-    
 
   }else if(messageText.match("履歴")){
     var message1 = "カレンダー\n" + prop.CALENDAR_URL;
@@ -48,6 +55,13 @@ function getMessage(e){
     var message = "【READ ME】\n●「おつかれ/お疲れ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
     reply(replyToken, message);
   };
+}
+
+function getWork(event,replyToken){
+  var date = event.postback.params.date;
+  var message = "${date}日の作業カテゴリを選択してください".replace("${date}", date);
+  cache.put("date", date);
+  reply(replyToken, message);
 }
 
 
