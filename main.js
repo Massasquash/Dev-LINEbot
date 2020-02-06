@@ -6,6 +6,13 @@ var ssForLogs = SpreadsheetApp.getActiveSpreadsheet();
 var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
 
+//LINE Messagin api
+var replyUrl = "https://api.line.me/v2/bot/message/reply";
+var header = {
+  "Content-Type" : "application/json",
+  "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
+}
+
 
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
@@ -54,8 +61,6 @@ function getMessage(event, replyToken){
 
 // ボタンテンプレートを出してから日時選択アクションを送る処理
 function datetimePicker(replyToken){
-  var url = "https://api.line.me/v2/bot/message/reply";
-
   var message = {
     "replyToken" : replyToken,
     "messages" : [
@@ -93,13 +98,10 @@ function datetimePicker(replyToken){
 
   var options = {
     "method" : "post",
-    "headers" : {
-      "Content-Type" : "application/json",
-      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-    }, 
+    "headers" : header, 
     "payload" : JSON.stringify(message)
   };
-  UrlFetchApp.fetch(url, options);
+  UrlFetchApp.fetch(replyUrl, options);
 }
 
 function getWork(event,replyToken){
@@ -119,7 +121,6 @@ function getWork(event,replyToken){
 
 // ラインにメッセージを返す処理。
 function reply(replyToken, message){
-  var url = "https://api.line.me/v2/bot/message/reply";
   var message = {
     "replyToken" : replyToken,
     "messages" : [
@@ -139,13 +140,12 @@ function reply(replyToken, message){
     "payload" : JSON.stringify(message)
   };
 
-  UrlFetchApp.fetch(url, options);
+  UrlFetchApp.fetch(replyUrl, options);
 }
 
 
 // ラインに二つのメッセージを返す処理。
 function replyMessages(replyToken, message1, message2){
-  var url = "https://api.line.me/v2/bot/message/reply";
   var message = {
     "replyToken" : replyToken,
     "messages" : [{
@@ -160,14 +160,11 @@ function replyMessages(replyToken, message1, message2){
 
   var options = {
     "method" : "post",
-    "headers" : {
-      "Content-Type" : "application/json",
-      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-    },
+    "headers" : header,
     "payload" : JSON.stringify(message)
   };
 
-  UrlFetchApp.fetch(url, options);
+  UrlFetchApp.fetch(replyUrl, options);
 }
 
 
@@ -176,8 +173,6 @@ function replyMessages(replyToken, message1, message2){
 
 // // クイックリプライを送信する処理
 // function quickReply(replyToken, quickReplymessage){
-//   var url = "https://api.line.me/v2/bot/message/reply";
-
 //   var message = {
 //     "replyToken" : replyToken,
 //     "messages" : [
@@ -239,15 +234,11 @@ function replyMessages(replyToken, message1, message2){
 
 //   var options = {
 //     "method" : "post",
-//     "headers" : {
-//       "Content-Type" : "application/json",
-//       "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-//     },
+//     "headers" : header,
 //     "payload" : JSON.stringify(message)
 //   };
 
-//   UrlFetchApp.fetch(url, options);
-
+//   UrlFetchApp.fetch(replyUrl, options);
 // }
 
 
