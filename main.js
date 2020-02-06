@@ -93,12 +93,11 @@ function datetimePicker(replyToken){
     "messages" : [
       {
         "type" : "template",
-        "altText" : "日報登録"
+        "altText" : "日報登録",
         "template" : {
           "type" : "buttons",
           "title" : "日報登録",
-          "text" : "今日も一日お疲れ様でした！"
-          },
+          "text" : "今日も一日お疲れ様でした！",
           "actions" :[
             {
               "type": "postback",
