@@ -26,15 +26,9 @@ function doPost(e) {
 
   try{
     outputLog("doPost", event);
-    if(event.type == "message"){
-      outputLog("doPost", event.type);
-      getMessage(event, replyToken);
-    } else if(event.type == "postback"){
-      outputLog("doPost", event.type);
-      getWork(event, replyToken);
-    }
+    getMessage(event, replyToken);
   } catch(e) {
-    outputLog("例外処理", e.message);
+    outputLog("doPost", e.message);
   }
 
 };
@@ -42,21 +36,54 @@ function doPost(e) {
 // メッセージを受け取った時の処理
 function getMessage(event, replyToken){
   var messageText = event.message.text;
+
+  var cache = CacheService.getScriptCache();
+  var flag = cache.get("flag");
   
-  // ユーザーから受け取ったメッセージを部分一致で処理を分岐
-  if(messageText.match("おつ")||messageText.match("疲")){
-    datetimePicker(replyToken);
+  if(flag == null){
+    // ユーザーから受け取ったメッセージにより部分一致で処理を分岐（WORK登録処理が進んでない場合）
+    if(messageText.match("おつ")||messageText.match("疲")){
+      // WORK登録処理を進める
+      cache.put("flag", 1)
+      datetimePicker(replyToken);
+    }else if(messageText.match("履歴")){
+      var msg1 = "カレンダー\n" + prop.CALENDAR_URL;
+      var msg2 = "シート\n" + prop.SPREADSHEET_URL;
+      replyMessages(replyToken, msg1, msg2);
+    }else{
+      var msg = "【READ ME】\n●「おつかれ/お疲れ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
+      reply(replyToken, msg);
+    }
+  } else {
+    // WORK登録処理中にユーザーが「キャンセル」と入力した場合
+    if(messageText === "キャンセル"){
+      cache.remove("flag");
+      msg = "日報登録をキャンセルしたよ";
+      reply(replyToken, msg);
+      return;
+    }
 
-  }else if(messageText.match("履歴")){
-    var message1 = "カレンダー\n" + prop.CALENDAR_URL;
-    var message2 = "シート\n" + prop.SPREADSHEET_URL;
-    replyMessages(replyToken, message1, message2);
+    //cacheのflagの値によってWORK登録処理を分岐
+    switch(flag){
+      case "1":
+        cache.put("flag", 2);
+        cache.put("date", event.postback.params.date)
+        msg = "次にカテゴリを選んでね。「キャンセル」でキャンセルします。";
+        quickReply(replyToken, msg);
+        break;
+      case "2":
+        cache.put("flag", 3);
+        cache.put("category", event.postback.data );
+        msg = "次に内容をチャットで入力してね。「キャンセル」でキャンセルします。";
+        reply(replyToken, msg);
+        break;
+    }
 
-  }else{
-    var message = "【READ ME】\n●「おつかれ/お疲れ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
-    reply(replyToken, message);
-  };
+  }
 }
+
+
+
 
 
 // ボタンテンプレートを出してから日時選択アクションを送る処理
@@ -66,28 +93,28 @@ function datetimePicker(replyToken){
     "messages" : [
       {
         "type" : "template",
-        "altText" : "日報を入力する？",
-        "text" : "日報登録",
+        "altText" : "日報登録"
         "template" : {
           "type" : "buttons",
           "title" : "日報登録",
-          "text" : "選んでね",
-          "defaultAction" : {
-            "type": "datetimepicker",
-            "label": "はい",
-            "data": "action=settime",
-            "mode": "date"
+          "text" : "今日も一日お疲れ様でした！"
           },
           "actions" :[
             {
+              "type": "postback",
+              "label":"今日の日報を書く",
+              "data": "action=today",
+              "displayText": "今日の日報を書く"
+            },{
               "type": "datetimepicker",
-              "label": "はい",
+              "label": "日付を選んで日報を書く",
               "data": "action=settime",
               "mode": "date"
             },{
               "type" : "postback",
               "label" : "やっぱりやめる",
-              "data" : "action=cancel"
+              "data" : "action=cancel",
+              "displayText": "やっぱりやめる"
             }
           ]
         }
@@ -120,23 +147,20 @@ function getWork(event,replyToken){
 
 
 // ラインにメッセージを返す処理。
-function reply(replyToken, message){
+function reply(replyToken, msg){
   var message = {
     "replyToken" : replyToken,
     "messages" : [
       {
         "type" : "text",
-        "text" : message
+        "text" : msg
       }
     ]
   };
 
   var options = {
     "method" : "post",
-    "headers" : {
-      "Content-Type" : "application/json",
-      "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-    },
+    "headers" : header,
     "payload" : JSON.stringify(message)
   };
 
@@ -145,15 +169,15 @@ function reply(replyToken, message){
 
 
 // ラインに二つのメッセージを返す処理。
-function replyMessages(replyToken, message1, message2){
+function replyMessages(replyToken, msg1, msg2){
   var message = {
     "replyToken" : replyToken,
     "messages" : [{
         "type" : "text",
-        "text" : message1
+        "text" : msg1
       },{
         "type" : "text",
-        "text" : message2
+        "text" : msg2
       }
     ]
   };
@@ -171,75 +195,75 @@ function replyMessages(replyToken, message1, message2){
 
 
 
-// // クイックリプライを送信する処理
-// function quickReply(replyToken, quickReplymessage){
-//   var message = {
-//     "replyToken" : replyToken,
-//     "messages" : [
-//       {
-//         "type" : "text",
-//         "text" : quickReplymessage,
-//         "quickReply" :{
-//            "items" :[
-//             {
-//               "type" : "action",
-//               "action" :{
-//                 "type" : "postback",
-//                 "label" : "敷地内作業",
-//                 "data" : "action=setdata1",
-//                 "displayText" : "【WORK登録】敷地内選択"
-//               }
-//             },{
-//               "type" : "action",
-//               "action" :{
-//                 "type" : "message",
-//                 "label" : "QR2",
-//                 "text" : "QR2が選択されました。"
-//               }
-//             },{
-//               "type" : "action",
-//               "action" :{
-//                 "type" : "message",
-//                 "label" : "QR3",
-//                 "text" : "QR3が選択されました。"
-//               }
-//             },{
-//               "type" : "action",
-//               "action" :{
-//                 "type" : "message",
-//                 "label" : "QR4",
-//                 "text" : "QR4が選択されました。"
-//               }
-//             },{
-//               "type" : "action",
-//               "action" :{
-//                 "type" : "message",
-//                 "label" : "QR5",
-//                 "text" : "QR5が選択されました。"
-//               }
-//             },{
-//               "type" : "action",
-//               "action" :{
-//                 "type" : "message",
-//                 "label" : "QR6",
-//                 "text" : "QR6が選択されました。"
-//               }
-//             }
-//           ]
-//         }
-//       }
-//     ]
-// //    "notificationDisabled" : false // trueだとユーザーに通知されない
-//   };
+// クイックリプライを送信する処理
+function quickReply(replyToken, msg){
+  var message = {
+    "replyToken" : replyToken,
+    "messages" : [
+      {
+        "type" : "text",
+        "text" : msg,
+        "quickReply" :{
+           "items" :[
+            {
+              "type" : "action",
+              "action" :{
+                "type" : "postback",
+                "label" : "敷地内作業",
+                "data" : "action=setdata1",
+                "displayText" : "【WORK登録】敷地内選択"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR2",
+                "text" : "QR2が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR3",
+                "text" : "QR3が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR4",
+                "text" : "QR4が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR5",
+                "text" : "QR5が選択されました。"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "QR6",
+                "text" : "QR6が選択されました。"
+              }
+            }
+          ]
+        }
+      }
+    ]
+//    "notificationDisabled" : false // trueだとユーザーに通知されない
+  };
 
-//   var options = {
-//     "method" : "post",
-//     "headers" : header,
-//     "payload" : JSON.stringify(message)
-//   };
+  var options = {
+    "method" : "post",
+    "headers" : header,
+    "payload" : JSON.stringify(message)
+  };
 
-//   UrlFetchApp.fetch(replyUrl, options);
-// }
+  UrlFetchApp.fetch(replyUrl, options);
+}
 
 
 //スプレッドシートにログを表示するためのもの
