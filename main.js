@@ -25,10 +25,14 @@ function doPost(e) {
   }
 
   try{
-    outputLog("doPost", event);
-    getMessage(event, replyToken);
+    outputLog("doPost(event)", event);
+    if(event.type == "message") {
+      getMessage(event, replyToken);
+    } else if(event.type == "postback") {
+      getPostback(event, replyToken);
+    }
   } catch(e) {
-    outputLog("doPost", e.message);
+    outputLog("error:" + e.lineNumber , e.message);
   }
 
 };
@@ -44,7 +48,6 @@ function getMessage(event, replyToken){
     // ユーザーから受け取ったメッセージにより部分一致で処理を分岐（WORK登録処理が進んでない場合）
     if(messageText.match("おつ")||messageText.match("疲")){
       // WORK登録処理を進める
-      cache.put("flag", 1)
       datetimePicker(replyToken);
     }else if(messageText.match("履歴")){
       var msg1 = "カレンダー\n" + prop.CALENDAR_URL;
@@ -54,92 +57,44 @@ function getMessage(event, replyToken){
       var msg = "【READ ME】\n●「おつかれ/お疲れ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
       reply(replyToken, msg);
     }
-  } else {
-    // WORK登録処理中にユーザーが「キャンセル」と入力した場合
-    if(messageText === "キャンセル"){
-      cache.remove("flag");
-      msg = "日報登録をキャンセルしたよ";
-      reply(replyToken, msg);
-      return;
-    }
 
-    //cacheのflagの値によってWORK登録処理を分岐
-    switch(flag){
-      case "1":
-        cache.put("flag", 2);
-        cache.put("date", event.postback.params.date)
-        msg = "次にカテゴリを選んでね。「キャンセル」でキャンセルします。";
-        quickReply(replyToken, msg);
-        break;
-      case "2":
-        cache.put("flag", 3);
-        cache.put("category", event.postback.data );
-        msg = "次に内容をチャットで入力してね。「キャンセル」でキャンセルします。";
-        reply(replyToken, msg);
-        break;
-    }
+  } else {
+
+    cache.put("flag", 3)
+    cache.put("title", event.message)
+    outputLog("getPostback(title)", "作業タイトル入力完了。カレンダーに登録して確認リプライを送ります。");
+    outputLog("getPostback(title)", event.message); 
 
   }
 }
 
+//ポストバックアクションを受け取った時の処理
+function getPostback(event, replyToken){
+  var cache = CacheService.getScriptCache();
+  var flag = cache.get("flag");
 
+  if(flag == null){
+    if(event.postback.data == "action=today"){
+      var date = new Date();
+    } else if(event.postback.data == "action=settime"){
+      var date = event.postback.params.date;
+    }
+    cache.put("flag", 1)
+    cache.put("date", date);
+    outputLog("getPostback(date)", "日付入力完了。次にカテゴリをクイックリプライで選択してもらう。");
+    outputLog("getPostback(date)", date);
+    var msg = "${date}日の作業カテゴリを選択してください".replace("${date}", date);
+    quickReply(replyToken, msg);
 
-
-
-// ボタンテンプレートを出してから日時選択アクションを送る処理
-function datetimePicker(replyToken){
-  var message = {
-    "replyToken" : replyToken,
-    "messages" : [
-      {
-        "type" : "template",
-        "altText" : "日報登録",
-        "template" : {
-          "type" : "buttons",
-          "title" : "日報登録",
-          "text" : "今日も一日お疲れ様でした！",
-          "actions" :[
-            {
-              "type": "postback",
-              "label":"今日の日報を書く",
-              "data": "action=today",
-              "displayText": "今日の日報を書く"
-            },{
-              "type": "datetimepicker",
-              "label": "日付を選んで日報を書く",
-              "data": "action=settime",
-              "mode": "date"
-            },{
-              "type" : "postback",
-              "label" : "やっぱりやめる",
-              "data" : "action=cancel",
-              "displayText": "やっぱりやめる"
-            }
-          ]
-        }
-      }
-    ]
-//  "notificationDisabled" : false // trueだとユーザーに通知されない
-  };
-
-  var options = {
-    "method" : "post",
-    "headers" : header, 
-    "payload" : JSON.stringify(message)
-  };
-  UrlFetchApp.fetch(replyUrl, options);
+  } else {
+    cache.put("flag", 2);
+    cache.put("category", event.postback.data);
+    outputLog("getPostback(category)", "カテゴリ入力完了。次に作業名をユーザーに入力してもらう。");
+    outputLog("getPostback(category)", event.postback.data); 
+    var msg = "作業名を入力してください（例：播種、追肥、防除…）"
+    reply(replyToken, msg);
+  }
 }
-
-function getWork(event,replyToken){
-  var date = event.postback.params.date;
-  var message = "${date}日の作業カテゴリを選択してください".replace("${date}", date);
-  outputLog("5", date);
-  reply(replyToken, message);
-}
-
-
-
-
 
 
 
@@ -191,7 +146,49 @@ function replyMessages(replyToken, msg1, msg2){
 }
 
 
+// ボタンテンプレートを出してから日時選択アクションを送る処理
+function datetimePicker(replyToken){
+  var message = {
+    "replyToken" : replyToken,
+    "messages" : [
+      {
+        "type" : "template",
+        "altText" : "日報登録",
+        "template" : {
+          "type" : "buttons",
+          "title" : "日報登録",
+          "text" : "今日も一日お疲れ様でした！",
+          "actions" :[
+            {
+              "type": "postback",
+              "label":"今日の日報を書く",
+              "data": "action=today",
+              "displayText": "今日の日報を書く"
+            },{
+              "type": "datetimepicker",
+              "label": "日付を選んで日報を書く",
+              "data": "action=settime",
+              "mode": "date"
+            },{
+              "type" : "postback",
+              "label" : "やっぱりやめる",
+              "data" : "action=cancel",
+              "displayText": "やっぱりやめる"
+            }
+          ]
+        }
+      }
+    ]
+//  "notificationDisabled" : false // trueだとユーザーに通知されない
+  };
 
+  var options = {
+    "method" : "post",
+    "headers" : header, 
+    "payload" : JSON.stringify(message)
+  };
+  UrlFetchApp.fetch(replyUrl, options);
+}
 
 
 // クイックリプライを送信する処理
@@ -273,14 +270,3 @@ function outputLog(label, text){
   );
   return;
 }
-
-
-//   //デバッグ用ログテンプレ
-//   outputLog("0", e.postData.contents);
-//   outputLog("1", JSON.parse(e.postData.contents));
-//   outputLog("2", JSON.parse(e.postData.contents).events[0]);
-//   outputLog("3", JSON.parse(e.postData.contents).events[0].message.text);
-//   outputLog("4", JSON.parse(e.postData.getDataAsString()));
-//   outputLog("5", JSON.parse(e.postData.getDataAsString()).events[0]);
-//   outputLog("6", JSON.parse(e.postData.getDataAsString()).events[0].postback.params);
-//   outputLog("7", JSON.parse(e.postData.contents).events[0].postback.params);
