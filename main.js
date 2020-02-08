@@ -57,14 +57,28 @@ function getMessage(event, replyToken){
       var msg = "【READ ME】\n●「おつかれ/お疲れ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
       reply(replyToken, msg);
     }
-
   } else {
+    switch(flag){
+      case "1":
+        cache.put("flag", 2)
+        cache.put("category", event.message.text);
+        outputLog("getMessage(category)", event.message.text); 
+        var msg = "作業名を入力してください（例：播種、追肥、防除…）"
+        reply(replyToken, msg);
+        break;
+    
+      case "2":
+        cache.remove("flag");
+        outputLog("getMessage(title)", event.message.text);
 
-    cache.put("flag", 3)
-    cache.put("title", event.message)
-    outputLog("getPostback(title)", "作業タイトル入力完了。カレンダーに登録して確認リプライを送ります。");
-    outputLog("getPostback(title)", event.message); 
+        var date = cache.get("date");
+        var title = cache.get("category");
+        title = title + " " + event.message.text;
+        reply(replyToken, "Googleカレンダーに予定を追加しました");
 
+        // calendar.createAllDayEvent(title, date);
+        break;
+    }
   }
 }
 
@@ -73,27 +87,24 @@ function getPostback(event, replyToken){
   var cache = CacheService.getScriptCache();
   var flag = cache.get("flag");
 
-  if(flag == null){
-    if(event.postback.data == "action=today"){
-      var date = new Date();
-    } else if(event.postback.data == "action=settime"){
-      var date = event.postback.params.date;
-    }
-    cache.put("flag", 1)
-    cache.put("date", date);
-    outputLog("getPostback(date)", "日付入力完了。次にカテゴリをクイックリプライで選択してもらう。");
-    outputLog("getPostback(date)", date);
-    var msg = "${date}日の作業カテゴリを選択してください".replace("${date}", date);
-    quickReply(replyToken, msg);
-
-  } else {
-    cache.put("flag", 2);
-    cache.put("category", event.postback.data);
-    outputLog("getPostback(category)", "カテゴリ入力完了。次に作業名をユーザーに入力してもらう。");
-    outputLog("getPostback(category)", event.postback.data); 
-    var msg = "作業名を入力してください（例：播種、追肥、防除…）"
+  //ボタンテンプレートの入力により分岐を処理
+  if(event.postback.data == "action=today"){
+    var date = new Date();
+  } else if(event.postback.data == "action=settime"){
+    var date = event.postback.params.date;
+  } else if(event.postback.data == "action=cancel"){
+    cache.removeAll(["flag", "date", "category"]);
+    msg = "日報登録をキャンセルしたよ";
     reply(replyToken, msg);
+    return;
   }
+  cache.put("flag", 1)
+  cache.put("date", date);
+  outputLog("getPostback(date)", date);
+  outputLog("getPostback(typeof(date))", typeof(date));
+  var msg = "${date}日の作業カテゴリを選択してください".replace("${date}", date);
+  quickReply(replyToken, msg);
+
 }
 
 
@@ -163,7 +174,6 @@ function datetimePicker(replyToken){
               "type": "postback",
               "label":"今日の日報を書く",
               "data": "action=today",
-              "displayText": "今日の日報を書く"
             },{
               "type": "datetimepicker",
               "label": "日付を選んで日報を書く",
@@ -204,45 +214,51 @@ function quickReply(replyToken, msg){
             {
               "type" : "action",
               "action" :{
-                "type" : "postback",
+                "type" : "message",
                 "label" : "敷地内作業",
-                "data" : "action=setdata1",
-                "displayText" : "【WORK登録】敷地内選択"
+                "text" : "敷地内選択"
               }
             },{
               "type" : "action",
               "action" :{
                 "type" : "message",
-                "label" : "QR2",
-                "text" : "QR2が選択されました。"
+                "label" : "小麦",
+                "text" : "小麦"
               }
             },{
               "type" : "action",
               "action" :{
                 "type" : "message",
-                "label" : "QR3",
-                "text" : "QR3が選択されました。"
+                "label" : "ビート",
+                "text" : "ビート"
               }
             },{
               "type" : "action",
               "action" :{
                 "type" : "message",
-                "label" : "QR4",
-                "text" : "QR4が選択されました。"
+                "label" : "馬鈴薯",
+                "text" : "馬鈴薯"
               }
             },{
               "type" : "action",
               "action" :{
                 "type" : "message",
-                "label" : "QR5",
-                "text" : "QR5が選択されました。"
+                "label" : "大豆",
+                "text" : "大豆"
               }
             },{
               "type" : "action",
               "action" :{
                 "type" : "message",
-                "label" : "QR6",
-                "text" : "QR6が選択されました。"
+                "label" : "長芋",
+                "text" : "長芋"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "message",
+                "label" : "他",
+                "text" : "他"
               }
             }
           ]
