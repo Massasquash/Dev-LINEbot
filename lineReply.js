@@ -163,13 +163,3 @@ function reply(replyToken, msg){
   
     UrlFetchApp.fetch(replyUrl, options);
   }
-  
-  
-  //スプレッドシートにログを表示するためのもの
-  function outputLog(label, text){
-    var sheetName = "logs";
-    ssForLogs.getSheetByName(sheetName).appendRow(
-      [new Date(), label, text]
-    );
-    return;
-  }

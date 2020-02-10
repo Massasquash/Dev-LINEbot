@@ -74,7 +74,8 @@ function getMessage(event, replyToken){
         var date = cache.get("date");
         var title = cache.get("category");
         title = title + " " + event.message.text;
-        reply(replyToken, "Googleカレンダーに予定を追加しました");
+        msg = "Googleカレンダーに日報を登録しました";
+        reply(replyToken, msg);
 
         // calendar.createAllDayEvent(title, date);
         break;
@@ -106,3 +107,13 @@ function getPostback(event, replyToken){
   quickReply(replyToken, msg);
 
 }
+
+
+  //スプレッドシートにログを表示するためのもの
+  function outputLog(label, text){
+    var sheetName = "logs";
+    ssForLogs.getSheetByName(sheetName).appendRow(
+      [new Date(), label, text]
+    );
+    return;
+  }
