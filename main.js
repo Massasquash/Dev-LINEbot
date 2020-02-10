@@ -62,22 +62,19 @@ function getMessage(event, replyToken){
       case "1":
         cache.put("flag", 2)
         cache.put("category", event.message.text);
-        outputLog("getMessage(category)", event.message.text); 
         var msg = "作業名を入力してください（例：播種、追肥、防除…）"
         reply(replyToken, msg);
         break;
     
       case "2":
         cache.remove("flag");
-        outputLog("getMessage(title)", event.message.text);
-
-        var date = cache.get("date");
-        var title = cache.get("category");
-        title = title + " " + event.message.text;
-        msg = "Googleカレンダーに日報を登録しました";
-        reply(replyToken, msg);
+        cache.put("title", event.message.text);
+        var [title, date] = createData(cache);
+        var msg = "Googleカレンダーに日報を登録しました";
+        outputLog("getMessage([title, date])", [title, date]);
 
         // calendar.createAllDayEvent(title, date);
+        reply(replyToken, msg);
         break;
     }
   }
@@ -88,10 +85,12 @@ function getPostback(event, replyToken){
   var cache = CacheService.getScriptCache();
   var flag = cache.get("flag");
 
-  //ボタンテンプレートの入力により分岐を処理
+  //日報入力ボタンテンプレートの入力により分岐を処理
   if(event.postback.data == "action=today"){
-    var date = new Date();
+    //今日の日付を選んだ場合はdateはnull
+    var date = "0";
   } else if(event.postback.data == "action=settime"){
+    //日時選択アクションで取得した日付はstring型でdateに入る
     var date = event.postback.params.date;
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category"]);
@@ -101,12 +100,33 @@ function getPostback(event, replyToken){
   }
   cache.put("flag", 1)
   cache.put("date", date);
-  outputLog("getPostback(date)", date);
-  outputLog("getPostback(typeof(date))", typeof(date));
   var msg = "${date}日の作業カテゴリを選択してください".replace("${date}", date);
   quickReply(replyToken, msg);
 
 }
+
+
+function createData(cache){
+  var _date = cache.get("date");
+  var _category = cache.get("category");   
+  var _title = cache.get("title");
+
+  if(_date == "0"){
+    var date = new Date();
+  } else {
+    _date = _date.replace("-", "/");
+    var date = new Date(_date);
+  }
+  var title = _category + ":" + _title
+
+  return [title, date]
+}
+
+
+
+
+
+
 
 
   //スプレッドシートにログを表示するためのもの
