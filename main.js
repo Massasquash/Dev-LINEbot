@@ -39,6 +39,7 @@ function doPost(e) {
 
 };
 
+
 // メッセージを受け取った時の処理
 function getMessage(event, replyToken){
   var messageText = event.message.text;
@@ -51,15 +52,19 @@ function getMessage(event, replyToken){
     if(messageText.match("おつ")||messageText.match("疲")){
       // WORK登録処理を進める
       datetimePicker(replyToken);
+
     }else if(messageText.match("履歴")){
       var msg1 = "カレンダー\n" + prop.CALENDAR_URL;
       var msg2 = "シート\n" + prop.SPREADSHEET_URL;
       replyMessages(replyToken, msg1, msg2);
+
     }else{
       var msg = "[READ ME]\n●「おつかれ/お疲れ」と入れると日報を入力できるよ。\n●「履歴」と入れると過去の日報を確認できるよ。";
       reply(replyToken, msg);
     }
+
   } else {
+    //WORK登録処理を進める
     switch(flag){
       case "1":
         cache.put("flag", 2)
@@ -74,13 +79,12 @@ function getMessage(event, replyToken){
         var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
         var displayDate = year + "/" + month + "/" + day;
         var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
-        outputLog("getMessage(title)", title);
-        outputLog("getMessage(date)", date);
 
-        calendar.createAllDayEvent(title, date);
-        spreadsheet.getSheetByName("作業履歴").appendRow(
-          [displayDate, cache.get("category"), cache.get("title")]
-        );
+        //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
+        // calendar.createAllDayEvent(title, date);
+        // spreadsheet.getSheetByName("作業履歴").appendRow(
+        //   [displayDate, cache.get("category"), cache.get("title")]
+        // );
 
         reply(replyToken, msg);
         cache.removeAll(["flag", "date", "category", "title"]);
@@ -96,23 +100,25 @@ function getPostback(event, replyToken){
 
   //日報入力ボタンテンプレートの入力により分岐を処理
   if(event.postback.data == "action=today"){
-    //今日の日付を選んだ場合はdateはnull
+    //今日の日付を選んだ場合はdateは"0"を入れる
     var date = "0";
     var msg = "今日の作業カテゴリを選んでね";
+
   } else if(event.postback.data == "action=settime"){
     //日時選択アクションで取得した日付はstring型でdateに入る
     var date = event.postback.params.date;
     var msg = "${date}日の作業カテゴリを選んでね".replace("${date}", date);
+
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category", "title"]);
     msg = "日報登録をキャンセルしたよ";
     reply(replyToken, msg);
     return;
   }
+
   cache.put("flag", 1)
   cache.put("date", date);
   quickReply(replyToken, msg);
-
 }
 
 

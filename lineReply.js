@@ -76,7 +76,6 @@ function reply(replyToken, msg){
           }
         }
       ]
-  //  "notificationDisabled" : false // trueだとユーザーに通知されない
     };
   
     var options = {
@@ -91,18 +90,20 @@ function reply(replyToken, msg){
   // クイックリプライを送信する処理
   function quickReply(replyToken, msg){
 
+    var items = [];
     for(var index in categories){
-        var items = [];
-        items[index] = {
-            "type" : "action",
-            "action" :{
+      items.push(
+        {
+          "type" : "action",
+          "action" :{
             "type" : "message",
             "label" : categories[index],
             "text" : categories[index]
           }
-        };
-      }
-
+        }
+      );
+    }
+    
     var message = {
       "replyToken" : replyToken,
       "messages" : [
@@ -114,7 +115,6 @@ function reply(replyToken, msg){
           }
         }
       ]
-  //    "notificationDisabled" : false // trueだとユーザーに通知されない
     };
   
     var options = {
