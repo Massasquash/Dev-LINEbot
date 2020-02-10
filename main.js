@@ -54,7 +54,7 @@ function getMessage(event, replyToken){
       var msg2 = "シート\n" + prop.SPREADSHEET_URL;
       replyMessages(replyToken, msg1, msg2);
     }else{
-      var msg = "【READ ME】\n●「おつかれ/お疲れ」と入れてみてください。日報を入力できます。\n●「履歴」と入れるとカレンダー・シートを送ります。";
+      var msg = "[READ ME]\n●「おつかれ/お疲れ」と入れると日報を入力できるよ。\n●「履歴」と入れると過去の日報を確認できるよ。";
       reply(replyToken, msg);
     }
   } else {
@@ -62,19 +62,22 @@ function getMessage(event, replyToken){
       case "1":
         cache.put("flag", 2)
         cache.put("category", event.message.text);
-        var msg = "作業名を入力してください（例：播種、追肥、防除…）"
+        var msg = "作業名を入れてね。短い文字数でよろしく（例：播種、追肥、防除、機械整備…）"
         reply(replyToken, msg);
         break;
     
       case "2":
-        cache.remove("flag");
         cache.put("title", event.message.text);
-        var [title, date] = createData(cache);
-        var msg = "Googleカレンダーに日報を登録しました";
-        outputLog("getMessage([title, date])", [title, date]);
+        var [title, date] = createDataForCalender(cache);
+        var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
+        var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${year}/${month}/${day}\n◼️タイトル：${title}".replace("${year}", year).replace("${month}", month).replace("${day}", day).replace("${title}", title);
+        outputLog("getMessage(title)", title);
+        outputLog("getMessage(date)", date);
 
         // calendar.createAllDayEvent(title, date);
+
         reply(replyToken, msg);
+        cache.removeAll(["flag", "date", "category", "title"]);
         break;
     }
   }
@@ -89,24 +92,25 @@ function getPostback(event, replyToken){
   if(event.postback.data == "action=today"){
     //今日の日付を選んだ場合はdateはnull
     var date = "0";
+    var msg = "今日の作業カテゴリを選んでね";
   } else if(event.postback.data == "action=settime"){
     //日時選択アクションで取得した日付はstring型でdateに入る
     var date = event.postback.params.date;
+    var msg = "${date}日の作業カテゴリを選んでね".replace("${date}", date);
   } else if(event.postback.data == "action=cancel"){
-    cache.removeAll(["flag", "date", "category"]);
+    cache.removeAll(["flag", "date", "category", "title"]);
     msg = "日報登録をキャンセルしたよ";
     reply(replyToken, msg);
     return;
   }
   cache.put("flag", 1)
   cache.put("date", date);
-  var msg = "${date}日の作業カテゴリを選択してください".replace("${date}", date);
   quickReply(replyToken, msg);
 
 }
 
 
-function createData(cache){
+function createDataForCalender(cache){
   var _date = cache.get("date");
   var _category = cache.get("category");   
   var _title = cache.get("title");
@@ -114,10 +118,10 @@ function createData(cache){
   if(_date == "0"){
     var date = new Date();
   } else {
-    _date = _date.replace("-", "/");
+    _date = _date.replace("-", "/").replace("-", "/");
     var date = new Date(_date);
   }
-  var title = _category + ":" + _title
+  var title = "[" + _category + "]" + _title
 
   return [title, date]
 }
