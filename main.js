@@ -13,6 +13,8 @@ var header = {
   "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
 }
 
+//カテゴリ一覧
+var categories =["圃場外", "小麦", "ビート", "馬鈴薯", "大豆", "長芋", "他"];
 
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時

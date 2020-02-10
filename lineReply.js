@@ -90,6 +90,19 @@ function reply(replyToken, msg){
   
   // クイックリプライを送信する処理
   function quickReply(replyToken, msg){
+
+    for(var index in categories){
+        var items = [];
+        items[index] = {
+            "type" : "action",
+            "action" :{
+            "type" : "message",
+            "label" : categories[index],
+            "text" : categories[index]
+          }
+        };
+      }
+
     var message = {
       "replyToken" : replyToken,
       "messages" : [
@@ -97,58 +110,7 @@ function reply(replyToken, msg){
           "type" : "text",
           "text" : msg,
           "quickReply" :{
-             "items" :[
-              {
-                "type" : "action",
-                "action" :{
-                  "type" : "message",
-                  "label" : "敷地内作業",
-                  "text" : "敷地内選択"
-                }
-              },{
-                "type" : "action",
-                "action" :{
-                  "type" : "message",
-                  "label" : "小麦",
-                  "text" : "小麦"
-                }
-              },{
-                "type" : "action",
-                "action" :{
-                  "type" : "message",
-                  "label" : "ビート",
-                  "text" : "ビート"
-                }
-              },{
-                "type" : "action",
-                "action" :{
-                  "type" : "message",
-                  "label" : "馬鈴薯",
-                  "text" : "馬鈴薯"
-                }
-              },{
-                "type" : "action",
-                "action" :{
-                  "type" : "message",
-                  "label" : "大豆",
-                  "text" : "大豆"
-                }
-              },{
-                "type" : "action",
-                "action" :{
-                  "type" : "message",
-                  "label" : "長芋",
-                  "text" : "長芋"
-                }
-              },{
-                "type" : "action",
-                "action" :{
-                  "type" : "message",
-                  "label" : "他",
-                  "text" : "他"
-                }
-              }
-            ]
+             "items" : items
           }
         }
       ]
