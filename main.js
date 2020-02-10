@@ -2,9 +2,9 @@
 var prop = PropertiesService.getScriptProperties().getProperties();
 
 //Googleサービス読み混み
-var ssForLogs = SpreadsheetApp.getActiveSpreadsheet();
+var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
-var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
+// var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
 
 //LINE Messagin api
 var replyUrl = "https://api.line.me/v2/bot/message/reply";
@@ -70,12 +70,15 @@ function getMessage(event, replyToken){
         cache.put("title", event.message.text);
         var [title, date] = createDataForCalender(cache);
         var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
-        var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${year}/${month}/${day}\n◼️タイトル：${title}".replace("${year}", year).replace("${month}", month).replace("${day}", day).replace("${title}", title);
+        var displayDate = year + "/" + month + "/" + day;
+        var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
         outputLog("getMessage(title)", title);
         outputLog("getMessage(date)", date);
 
-        outputLog("getMessage(calendar)", calendar.getName());
         calendar.createAllDayEvent(title, date);
+        spreadsheet.getSheetByName("作業履歴").appendRow(
+          [displayDate, cache.get("category"), cache.get("title")]
+        );
 
         reply(replyToken, msg);
         cache.removeAll(["flag", "date", "category", "title"]);
@@ -113,7 +116,7 @@ function getPostback(event, replyToken){
 
 function createDataForCalender(cache){
   var _date = cache.get("date");
-  var _category = cache.get("category");   
+  var _category = cache.get("category");
   var _title = cache.get("title");
 
   if(_date == "0"){
@@ -136,8 +139,7 @@ function createDataForCalender(cache){
 
   //スプレッドシートにログを表示するためのもの
   function outputLog(label, text){
-    var sheetName = "logs";
-    ssForLogs.getSheetByName(sheetName).appendRow(
+    spreadsheet.getSheetByName("logs").appendRow(
       [new Date(), label, text]
     );
     return;
