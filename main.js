@@ -74,7 +74,8 @@ function getMessage(event, replyToken){
         outputLog("getMessage(title)", title);
         outputLog("getMessage(date)", date);
 
-        // calendar.createAllDayEvent(title, date);
+        outputLog("getMessage(calendar)", calendar.getName());
+        calendar.createAllDayEvent(title, date);
 
         reply(replyToken, msg);
         cache.removeAll(["flag", "date", "category", "title"]);
