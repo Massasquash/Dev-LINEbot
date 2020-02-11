@@ -1,20 +1,14 @@
-//スクリプトプロパティの読み込み
+//プロパティ・Googleサービスの読み込み
 var prop = PropertiesService.getScriptProperties().getProperties();
 
-//Googleサービス読み混み
 var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 // var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
 
-//LINE Messagin api
-var replyUrl = "https://api.line.me/v2/bot/message/reply";
-var header = {
-  "Content-Type" : "application/json",
-  "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-}
-
 //カテゴリ一覧
 var categories =["圃場外", "小麦", "ビート", "馬鈴薯", "大豆", "長芋", "他"];
+
+var eventExp =  /(.*?)\n([\s\S]*)/;
 
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
@@ -69,23 +63,48 @@ function getMessage(event, replyToken){
       case "1":
         cache.put("flag", 2)
         cache.put("category", event.message.text);
-        var msg = "作業名を入れてね。短い文字数でよろしく（例：播種、追肥、防除、機械整備…）"
-        reply(replyToken, msg);
+        var msg1 = "「作業名」を入れてね。改行を入れることで「作業詳細」も入れられるよ";
+        var msg2 = "（作業名）追肥\n（作業詳細）圃場●●と××\n硫安 20kg/10a（××は少なめ）\n適期作業できた";
+        replyMessages(replyToken, msg1, msg2);
         break;
     
       case "2":
-        cache.put("title", event.message.text);
+        //ユーザーからの情報によって分岐
+        if(messageText.match(eventExp)){
+          var [text, title, desc] = messageText.match(eventExp);
+          cache.put("title", title);
+          var option = { description: desc };
+          outputLog("getMessage(messageText)", messageText);
+          outputLog("getMessage(title)", title);
+          outputLog("getMessage(desc)", desc);
+
+        } else if(messageText.match(/(.*)/)){
+          cache.put("title", messageText);
+          outputLog("getMessage(eventExp_1)", messageText );
+
+        } else {
+          msg = "もう一度入寮してね";
+          reply(replyToken, msg);
+          break;
+        }
+
         var [title, date] = createDataForCalender(cache);
         var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
         var displayDate = year + "/" + month + "/" + day;
         var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
-
+        
         //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
-        // calendar.createAllDayEvent(title, date);
-        // spreadsheet.getSheetByName("作業履歴").appendRow(
-        //   [displayDate, cache.get("category"), cache.get("title")]
-        // );
-
+        if(option != undefined){
+          calendar.createAllDayEvent(title, date, option);
+          // spreadsheet.getSheetByName("作業履歴").appendRow(
+          //   [displayDate, cache.get("category"), cache.get("title"), desc]
+          // );
+        } else {
+          calendar.createAllDayEvent(title, date);
+          // spreadsheet.getSheetByName("作業履歴").appendRow(
+          //   [displayDate, cache.get("category"), cache.get("title")]
+          // );
+        }
         reply(replyToken, msg);
         cache.removeAll(["flag", "date", "category", "title"]);
         break;
@@ -121,7 +140,7 @@ function getPostback(event, replyToken){
   quickReply(replyToken, msg);
 }
 
-
+//Googleカレンダーに登録する情報を作る処理
 function createDataForCalender(cache){
   var _date = cache.get("date");
   var _category = cache.get("category");
@@ -135,7 +154,7 @@ function createDataForCalender(cache){
   }
   var title = "[" + _category + "]" + _title
 
-  return [title, date]
+  return [title, date];
 }
 
 
