@@ -8,6 +8,7 @@ var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 //カテゴリ一覧
 var categories =["圃場外", "小麦", "ビート", "馬鈴薯", "大豆", "長芋", "他"];
 
+//パラメータ
 var eventExp =  /(.*?)\n([\s\S]*)/;
 
 
@@ -29,6 +30,8 @@ function doPost(e) {
     }
   } catch(e) {
     outputLog("error:" + e.lineNumber , e.message);
+    reply(replyToken, "なんかおかしいよ。エラーを確認してね\n" + e.message);
+    break;
   }
 
 };
@@ -63,24 +66,20 @@ function getMessage(event, replyToken){
       case "1":
         cache.put("flag", 2)
         cache.put("category", event.message.text);
-        var msg1 = "「作業名」を入れてね。改行を入れることで「作業詳細」も入れられるよ";
-        var msg2 = "（作業名）追肥\n（作業詳細）圃場●●と××\n硫安 20kg/10a（××は少なめ）\n適期作業できた";
+        var msg1 = "「作業名」を入れてね。２行目以降には「作業詳細」も入れられるよ（詳細は無くても大丈夫だよ）\n↓こんな感じでよろしく";
+        var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a（××は少なめ）\n適期作業できた";
         replyMessages(replyToken, msg1, msg2);
         break;
     
       case "2":
-        //ユーザーからの情報によって分岐
+        //タイトル・詳細を取得（ユーザー入力により分岐）
         if(messageText.match(eventExp)){
-          var [text, title, desc] = messageText.match(eventExp);
+          var [fullText, title, desc] = messageText.match(eventExp);
           cache.put("title", title);
           var option = { description: desc };
-          outputLog("getMessage(messageText)", messageText);
-          outputLog("getMessage(title)", title);
-          outputLog("getMessage(desc)", desc);
 
         } else if(messageText.match(/(.*)/)){
           cache.put("title", messageText);
-          outputLog("getMessage(eventExp_1)", messageText );
 
         } else {
           msg = "もう一度入寮してね";
@@ -94,17 +93,19 @@ function getMessage(event, replyToken){
         var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
         
         //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
-        if(option != undefined){
-          calendar.createAllDayEvent(title, date, option);
-          // spreadsheet.getSheetByName("作業履歴").appendRow(
-          //   [displayDate, cache.get("category"), cache.get("title"), desc]
-          // );
-        } else {
-          calendar.createAllDayEvent(title, date);
-          // spreadsheet.getSheetByName("作業履歴").appendRow(
-          //   [displayDate, cache.get("category"), cache.get("title")]
-          // );
-        }
+        // if(option === undefined){
+        //   calendar.createAllDayEvent(title, date);
+        //     spreadsheet.getSheetByName("作業履歴").appendRow(
+        //     [displayDate, cache.get("category"), cache.get("title")]
+        //   );
+        // } else {
+        //   calendar.createAllDayEvent(title, date, option);
+        //   spreadsheet.getSheetByName("作業履歴").appendRow(
+        //      [displayDate, cache.get("category"), cache.get("title"), desc]
+        //   );
+        // }
+        //// カレンダー・シートへの登録処理ここまで
+
         reply(replyToken, msg);
         cache.removeAll(["flag", "date", "category", "title"]);
         break;
