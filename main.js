@@ -31,7 +31,7 @@ function doPost(e) {
   } catch(e) {
     outputLog("error:" + e.lineNumber , e.message);
     reply(replyToken, "なんかおかしいよ。エラーを確認してね\n" + e.message);
-    break;
+    return;
   }
 
 };
@@ -84,7 +84,7 @@ function getMessage(event, replyToken){
         } else {
           msg = "もう一度入寮してね";
           reply(replyToken, msg);
-          break;
+          return;
         }
 
         var [title, date] = createDataForCalender(cache);
