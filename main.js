@@ -128,7 +128,6 @@ function getMessage(event, replyToken){
 //ポストバックアクションを受け取った時の処理
 function getPostback(event, replyToken){
   var cache = CacheService.getScriptCache();
-  var flag = cache.get("flag");
 
   //日報入力ボタンテンプレートの入力により分岐を処理
   if(event.postback.data == "action=today"){

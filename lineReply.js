@@ -11,6 +11,7 @@ var header = {
 function reply(replyToken, msg){
   var message = {
     "replyToken" : replyToken,
+    "notificationDisabled" : true,
     "messages" : [
       {
         "type" : "text",
@@ -33,6 +34,7 @@ function reply(replyToken, msg){
 function replyMessages(replyToken, msg1, msg2){
   var message = {
     "replyToken" : replyToken,
+    "notificationDisabled" : true,
     "messages" : [{
         "type" : "text",
         "text" : msg1
@@ -57,6 +59,7 @@ function replyMessages(replyToken, msg1, msg2){
 function datetimePicker(replyToken){
   var message = {
     "replyToken" : replyToken,
+    "notificationDisabled" : true,
     "messages" : [
       {
         "type" : "template",
@@ -115,6 +118,7 @@ function quickReply(replyToken, msg){
   
   var message = {
     "replyToken" : replyToken,
+    "notificationDisabled" : true,
     "messages" : [
       {
         "type" : "text",
@@ -140,6 +144,7 @@ function carouselTemplate(replyToken) {
 
   var message = {
     "replyToken" : replyToken,
+    "notificationDisabled" : true,
     "messages" : [
       {
         "type" : "template",
