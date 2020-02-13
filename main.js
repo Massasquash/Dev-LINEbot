@@ -40,6 +40,7 @@ function doPost(e) {
 };
 
 
+
 // メッセージを受け取った時の処理
 function getMessage(event, replyToken){
   var messageText = event.message.text;
@@ -47,74 +48,82 @@ function getMessage(event, replyToken){
   var cache = CacheService.getScriptCache();
   var flag = cache.get("flag");
   
-  if(flag == null){
-    // ユーザーから受け取ったメッセージにより部分一致で処理を分岐（WORK登録処理が進んでない場合）
-    if(messageText.match("おつかれさま！")){
-      // WORK登録処理を進める
-      datetimePicker(replyToken);
+  // ユーザーから受け取ったメッセージにより処理を分岐（メニューから選択）
+  if(messageText.match("おつかれさま！")){
+    // WORK登録処理を進める
+    datetimePicker(replyToken);
+    cache.remove("flag");
 
-    }else if(messageText.match("履歴を見る")){
-      var msg1 = "カレンダー\n" + prop.CALENDAR_URL;
-      var msg2 = "シート\n" + prop.SPREADSHEET_URL;
-      replyMessages(replyToken, msg1, msg2);
+  }else if(messageText.match("履歴を見る")){
+    var msg1 = "カレンダー\n" + prop.CALENDAR_URL;
+    var msg2 = "シート\n" + prop.SPREADSHEET_URL;
+    replyMessages(replyToken, msg1, msg2);
+    cache.remove("flag");
 
-    }else if(messageText.match("使い方を知りたい")){
-      // ReadMeをカルーセルテンプレートで表示
-      carouselTemplate(replyToken);
-    }
+  }else if(messageText.match("使い方を知りたい")){
+    carouselTemplate(replyToken);
+    cache.remove("flag");
 
   } else {
-    //WORK登録処理を進める
-    switch(flag){
-      case "1":
-        cache.put("flag", 2)
-        cache.put("category", event.message.text);
-        var msg1 = "「作業名」を入れてね。２行目以降には「作業詳細」も入れられるよ（詳細は無くても大丈夫だよ）\n↓こんな感じでよろしく";
-        var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a（××は少なめ）\n適期作業できた";
-        replyMessages(replyToken, msg1, msg2);
-        break;
     
-      case "2":
-        //タイトル・詳細を取得（ユーザー入力により分岐）
-        if(messageText.match(eventExp)){
-          var [fullText, title, desc] = messageText.match(eventExp);
-          cache.put("title", title);
-          var option = { description: desc };
+    if(flag == null){
+      carouselTemplate(replyToken);
 
-        } else if(messageText.match(/(.*)/)){
-          cache.put("title", messageText);
+    } else {
+    //WORK登録処理を進める
+      switch(flag){
+        case "1":
+          cache.put("flag", 2)
+          cache.put("category", event.message.text);
+          var msg1 = "「作業名」を入れてね。２行目以降には「作業詳細」も入れられるよ（詳細は無くても大丈夫だよ）\n↓こんな感じでよろしく";
+          var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a（××は少なめ）\n適期作業できた";
+          replyMessages(replyToken, msg1, msg2);
+          break;
+      
+        case "2":
+          //タイトル・詳細を取得（ユーザー入力により分岐）
+          if(messageText.match(eventExp)){
+            var [fullText, title, desc] = messageText.match(eventExp);
+            cache.put("title", title);
+            var option = { description: desc };
 
-        } else {
-          msg = "もう一度入寮してね";
+          } else if(messageText.match(/(.*)/)){
+            cache.put("title", messageText);
+
+          } else {
+            msg = "もう一度入力してね";
+            reply(replyToken, msg);
+            return;
+          }
+
+          var [title, date] = createDataForCalender(cache);
+          var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
+          var displayDate = year + "/" + month + "/" + day;
+          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
+          
+          //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
+          // if(option === undefined){
+          //   calendar.createAllDayEvent(title, date);
+          //     spreadsheet.getSheetByName("作業履歴").appendRow(
+          //     [displayDate, cache.get("category"), cache.get("title")]
+          //   );
+          // } else {
+          //   calendar.createAllDayEvent(title, date, option);
+          //   spreadsheet.getSheetByName("作業履歴").appendRow(
+          //      [displayDate, cache.get("category"), cache.get("title"), desc]
+          //   );
+          // }
+          //// カレンダー・シートへの登録処理ここまで
+
           reply(replyToken, msg);
-          return;
-        }
-
-        var [title, date] = createDataForCalender(cache);
-        var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
-        var displayDate = year + "/" + month + "/" + day;
-        var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
-        
-        //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
-        // if(option === undefined){
-        //   calendar.createAllDayEvent(title, date);
-        //     spreadsheet.getSheetByName("作業履歴").appendRow(
-        //     [displayDate, cache.get("category"), cache.get("title")]
-        //   );
-        // } else {
-        //   calendar.createAllDayEvent(title, date, option);
-        //   spreadsheet.getSheetByName("作業履歴").appendRow(
-        //      [displayDate, cache.get("category"), cache.get("title"), desc]
-        //   );
-        // }
-        //// カレンダー・シートへの登録処理ここまで
-
-        reply(replyToken, msg);
-        cache.removeAll(["flag", "date", "category", "title"]);
-        break;
+          cache.removeAll(["flag", "date", "category", "title"]);
+          break;
+      }
     }
   }
 }
+
+
 
 //ポストバックアクションを受け取った時の処理
 function getPostback(event, replyToken){
