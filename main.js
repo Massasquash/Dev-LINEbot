@@ -86,6 +86,9 @@ function getMessage(event, replyToken){
           //タイトル・詳細を取得（ユーザー入力により分岐）
           if(messageText.match(eventExp)){
             var [fullText, title, desc] = messageText.match(eventExp);
+            //取得文字数を制限
+            title = title.substr(0, 10);
+            desc = desc.substr(0, 200);
             cache.put("title", title);
             var option = { description: desc };
 
@@ -101,7 +104,7 @@ function getMessage(event, replyToken){
           var [title, date] = createDataForCalender(cache);
           var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
           var displayDate = year + "/" + month + "/" + day;
-          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
+          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
           
           //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
           // if(option === undefined){
@@ -110,6 +113,7 @@ function getMessage(event, replyToken){
           //     [displayDate, cache.get("category"), cache.get("title")]
           //   );
           // } else {
+          //   msg += "\n◼️詳細：${desc}".replace("${desc}", desc);
           //   calendar.createAllDayEvent(title, date, option);
           //   spreadsheet.getSheetByName("作業履歴").appendRow(
           //      [displayDate, cache.get("category"), cache.get("title"), desc]
