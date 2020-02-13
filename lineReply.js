@@ -153,15 +153,15 @@ function carouselTemplate(replyToken) {
               "actions" : [
                 {
                   "type" : "postback",
-                  "label" : "基本操作",
+                  "label" : readmeMessages[0][1],
                   "data": "action=readme00"
                 },{
                   "type" : "postback",
-                  "label" : "入力項目について",
+                  "label" : readmeMessages[1][1],
                   "data": "action=readme01"
                 },{
                   "type" : "postback",
-                  "label" : "キーボードが表示されない",
+                  "label" : readmeMessages[2][1],
                   "data": "action=readme02"
                 }
               ]
@@ -171,15 +171,15 @@ function carouselTemplate(replyToken) {
               "actions" : [
                 {
                   "type" : "postback",
-                  "label" : "基本操作",
+                  "label" : readmeMessages[3][1],
                   "data": "action=readme10"
                 },{
                   "type" : "postback",
-                  "label" : "googleカレンダについて",
+                  "label" : readmeMessages[4][1],
                   "data": "action=readme11"
                 },{
                   "type" : "postback",
-                  "label" : "スプレッドシートについて",
+                  "label" : readmeMessages[5][1],
                   "data": "action=readme12"
                 }
               ]
@@ -189,15 +189,15 @@ function carouselTemplate(replyToken) {
               "actions" : [
                 {
                   "type" : "postback",
-                  "label" : "作業カテゴリを編集したい",
+                  "label" : readmeMessages[6][1],
                   "data": "action=readme20"
                 },{
                   "type" : "postback",
-                  "label" : "日報の編集・削除について",
+                  "label" : readmeMessages[7][1],
                   "data": "action=readme21"
                 },{
                   "type" : "postback",
-                  "label" : "制作者コメント",
+                  "label" : readmeMessages[8][1],
                   "data": "action=readme22"
                 }
               ]

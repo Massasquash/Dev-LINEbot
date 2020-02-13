@@ -8,6 +8,9 @@ var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 //カテゴリ一覧
 var categories =["圃場外", "小麦", "ビート", "馬鈴薯", "大豆", "長芋", "他"];
 
+var masterSheet = spreadsheet.getSheetByName('master');
+var readmeMessages = masterSheet.getRange('A2:C10').getValues();
+
 //パラメータ
 var eventExp =  /(.*?)\n([\s\S]*)/;
 
@@ -46,7 +49,7 @@ function getMessage(event, replyToken){
   
   if(flag == null){
     // ユーザーから受け取ったメッセージにより部分一致で処理を分岐（WORK登録処理が進んでない場合）
-    if(messageText.match("おつかれさま！"){
+    if(messageText.match("おつかれさま！")){
       // WORK登録処理を進める
       datetimePicker(replyToken);
 
@@ -55,14 +58,9 @@ function getMessage(event, replyToken){
       var msg2 = "シート\n" + prop.SPREADSHEET_URL;
       replyMessages(replyToken, msg1, msg2);
 
-    }else if(messageText.match("使い方を知りたい"){
+    }else if(messageText.match("使い方を知りたい")){
       // ReadMeをカルーセルテンプレートで表示
       carouselTemplate(replyToken);
-
-    }else if(message){
-
-
-
     }
 
   } else {
@@ -142,47 +140,47 @@ function getPostback(event, replyToken){
 
   //使い方カルーセルテンプレートの入力により分岐を処理
   } else if(event.postback.data == "action=readme00"){
-    msg = "test";
+    msg = readmeMessages[0][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme01"){
-    msg = "";
+    msg = readmeMessages[1][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme02"){
-    msg = "";
+    msg = readmeMessages[2][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme10"){
-    msg = "";
+    msg = readmeMessages[3][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme11"){
-    msg = "";
+    msg = readmeMessages[4][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme12"){
-    msg = "";
+    msg = readmeMessages[5][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme20"){
-    msg = "";
+    msg = readmeMessages[6][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme21"){
-    msg = "";
+    msg = readmeMessages[7][2];
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=readme22"){
-    msg = "";
+    msg = readmeMessages[8][2];
     reply(replyToken, msg);
     return;
 
