@@ -46,18 +46,23 @@ function getMessage(event, replyToken){
   
   if(flag == null){
     // ユーザーから受け取ったメッセージにより部分一致で処理を分岐（WORK登録処理が進んでない場合）
-    if(messageText.match("おつ")||messageText.match("疲")){
+    if(messageText.match("おつかれさま！"){
       // WORK登録処理を進める
       datetimePicker(replyToken);
 
-    }else if(messageText.match("履歴")){
+    }else if(messageText.match("履歴を見る")){
       var msg1 = "カレンダー\n" + prop.CALENDAR_URL;
       var msg2 = "シート\n" + prop.SPREADSHEET_URL;
       replyMessages(replyToken, msg1, msg2);
 
-    }else{
+    }else if(messageText.match("使い方を知りたい"){
       // ReadMeをカルーセルテンプレートで表示
       carouselTemplate(replyToken);
+
+    }else if(message){
+
+
+
     }
 
   } else {
@@ -134,6 +139,53 @@ function getPostback(event, replyToken){
     msg = "日報登録をキャンセルしたよ";
     reply(replyToken, msg);
     return;
+
+  //使い方カルーセルテンプレートの入力により分岐を処理
+  } else if(event.postback.data == "action=readme00"){
+    msg = "test";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme01"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme02"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme10"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme11"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme12"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme20"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme21"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=readme22"){
+    msg = "";
+    reply(replyToken, msg);
+    return;
+
   }
 
   cache.put("flag", 1)

@@ -152,17 +152,17 @@ function carouselTemplate(replyToken) {
               "text" : "日報を入力したい",
               "actions" : [
                 {
-                  "type" : "message",
+                  "type" : "postback",
                   "label" : "基本操作",
-                  "text" : "README00"
+                  "data": "action=readme00"
                 },{
-                  "type" : "message",
-                  "label" : "入力について",
-                  "text" : "README01"
+                  "type" : "postback",
+                  "label" : "入力項目について",
+                  "data": "action=readme01"
                 },{
-                  "type" : "message",
-                  "label" : "メニューとキーボード切替",
-                  "text" : "README01"
+                  "type" : "postback",
+                  "label" : "キーボードが表示されない",
+                  "data": "action=readme02"
                 }
               ]
             },{
@@ -170,17 +170,17 @@ function carouselTemplate(replyToken) {
               "text" : "履歴を見たい",
               "actions" : [
                 {
-                  "type" : "message",
+                  "type" : "postback",
                   "label" : "基本操作",
-                  "text" : "README10"
+                  "data": "action=readme10"
                 },{
-                  "type" : "message",
+                  "type" : "postback",
                   "label" : "googleカレンダについて",
-                  "text" : "README11"
+                  "data": "action=readme11"
                 },{
-                  "type" : "message",
+                  "type" : "postback",
                   "label" : "スプレッドシートについて",
-                  "text" : "README11"
+                  "data": "action=readme12"
                 }
               ]
             },{
@@ -188,17 +188,17 @@ function carouselTemplate(replyToken) {
               "text" : "その他",
               "actions" : [
                 {
-                  "type" : "message",
-                  "label" : "作業カテゴリについて",
-                  "text" : "README20"
+                  "type" : "postback",
+                  "label" : "作業カテゴリを編集したい",
+                  "data": "action=readme20"
                 },{
-                  "type" : "message",
+                  "type" : "postback",
                   "label" : "日報の編集・削除について",
-                  "text" : "README21"
+                  "data": "action=readme21"
                 },{
-                  "type" : "message",
+                  "type" : "postback",
                   "label" : "制作者コメント",
-                  "text" : "README22"
+                  "data": "action=readme22"
                 }
               ]
             }
