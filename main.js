@@ -79,7 +79,7 @@ function getMessage(event, replyToken){
         case "1":
           cache.put("flag", 2)
           cache.put("category", event.message.text);
-          var msg1 = "(2)[作業名]を入れてね。\n２行目以降には[作業の詳細]も入れられるよ（無くても問題ないよ）\n左下のマークをタップしたらキーボードが出るよ。\n↓こんな感じでよろしく";
+          var msg1 = "（２）[作業名]を入れてね。\n２行目以降には[作業の詳細]も入れられるよ（無くても問題ないよ）\n左下のマークをタップしたらキーボードが出るよ。\n↓こんな感じでよろしく";
           var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a";
           replyMessages(replyToken, msg1, msg2);
           break;
@@ -89,7 +89,7 @@ function getMessage(event, replyToken){
           if(messageText.match(eventExp)){
             var [fullText, title, desc] = messageText.match(eventExp);
             //取得文字数を制限
-            title = title.substr(0, 10);
+            title = title.substr(0, 20);
             desc = desc.substr(0, 200);
             cache.put("title", title);
 
@@ -109,16 +109,15 @@ function getMessage(event, replyToken){
 
           var lastRow = historySheet.getLastRow();
           var workId = historySheet.getRange(lastRow, 1).getValue() + 1;
-          desc += desc + "\n\nID: " + workId ; 
-          var option = { description: desc };
 
-          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
-          
+          var msg = "カレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
+
           // カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
-          calendar.createAllDayEvent(title, date, option);
           historySheet.appendRow(
-              [workId, displayDate, cache.get("category"), cache.get("title"), desc]
+            [workId, displayDate, cache.get("category"), cache.get("title"), desc]
           );
+          var option = { description: desc + "\nID: " + workId };
+          calendar.createAllDayEvent(title, date, option);
           // カレンダー・シートへの登録処理ここまで
 
           reply(replyToken, msg);
@@ -139,12 +138,13 @@ function getPostback(event, replyToken){
   if(event.postback.data == "action=today"){
     //今日の日付を選んだ場合はdateは"0"を入れる
     var date = "0";
-    var msg = "(1)今日の作業カテゴリを選んでね";
+    var msg = "（1）今日の作業カテゴリを選んでね";
 
   } else if(event.postback.data == "action=settime"){
     //日時選択アクションで取得した日付はstring型でdateに入る
     var date = event.postback.params.date;
-    var msg = "(1)${date}日の[作業カテゴリ]を選んでね".replace("${date}", date);
+    date = date.replace("-", "/").replace("-", "/");
+    var msg = "（1）${date}日の[作業カテゴリ]を選んでね".replace("${date}", date);
 
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category", "title"]);
@@ -214,7 +214,6 @@ function createDataForCalender(cache){
   if(_date == "0"){
     var date = new Date();
   } else {
-    _date = _date.replace("-", "/").replace("-", "/");
     var date = new Date(_date);
   }
   var title = "[" + _category + "]" + _title
