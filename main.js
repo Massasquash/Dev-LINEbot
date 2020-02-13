@@ -8,6 +8,8 @@ var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 //カテゴリ一覧
 var categories =["圃場外", "小麦", "ビート", "馬鈴薯", "大豆", "長芋", "他"];
 
+//シート・データを取得
+var historySheet = spreadsheet.getSheetByName('作業履歴');
 var masterSheet = spreadsheet.getSheetByName('master');
 var readmeMessages = masterSheet.getRange('A2:C10').getValues();
 
@@ -77,8 +79,8 @@ function getMessage(event, replyToken){
         case "1":
           cache.put("flag", 2)
           cache.put("category", event.message.text);
-          var msg1 = "「作業名」を入れてね。２行目以降には「作業詳細」も入れられるよ（詳細は無くても大丈夫だよ）\n↓こんな感じでよろしく";
-          var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a（××は少なめ）\n適期作業できた";
+          var msg1 = "(2)[作業名]を入れてね。\n２行目以降には[作業の詳細]も入れられるよ（無くても問題ないよ）\n左下のマークをタップしたらキーボードが出るよ。\n↓こんな感じでよろしく";
+          var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a";
           replyMessages(replyToken, msg1, msg2);
           break;
       
@@ -90,10 +92,10 @@ function getMessage(event, replyToken){
             title = title.substr(0, 10);
             desc = desc.substr(0, 200);
             cache.put("title", title);
-            var option = { description: desc };
 
           } else if(messageText.match(/(.*)/)){
             cache.put("title", messageText);
+            var desc = "";
 
           } else {
             msg = "もう一度入力してね";
@@ -104,22 +106,20 @@ function getMessage(event, replyToken){
           var [title, date] = createDataForCalender(cache);
           var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
           var displayDate = year + "/" + month + "/" + day;
-          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
+
+          var lastRow = historySheet.getLastRow();
+          var workId = historySheet.getRange(lastRow, 1).getValue() + 1;
+          desc += desc + "\n\nID: " + workId ; 
+          var option = { description: desc };
+
+          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
           
-          //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
-          // if(option === undefined){
-          //   calendar.createAllDayEvent(title, date);
-          //     spreadsheet.getSheetByName("作業履歴").appendRow(
-          //     [displayDate, cache.get("category"), cache.get("title")]
-          //   );
-          // } else {
-          //   msg += "\n◼️詳細：${desc}".replace("${desc}", desc);
-          //   calendar.createAllDayEvent(title, date, option);
-          //   spreadsheet.getSheetByName("作業履歴").appendRow(
-          //      [displayDate, cache.get("category"), cache.get("title"), desc]
-          //   );
-          // }
-          //// カレンダー・シートへの登録処理ここまで
+          // カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
+          calendar.createAllDayEvent(title, date, option);
+          historySheet.appendRow(
+              [workId, displayDate, cache.get("category"), cache.get("title"), desc]
+          );
+          // カレンダー・シートへの登録処理ここまで
 
           reply(replyToken, msg);
           cache.removeAll(["flag", "date", "category", "title"]);
@@ -139,12 +139,12 @@ function getPostback(event, replyToken){
   if(event.postback.data == "action=today"){
     //今日の日付を選んだ場合はdateは"0"を入れる
     var date = "0";
-    var msg = "今日の作業カテゴリを選んでね";
+    var msg = "(1)今日の作業カテゴリを選んでね";
 
   } else if(event.postback.data == "action=settime"){
     //日時選択アクションで取得した日付はstring型でdateに入る
     var date = event.postback.params.date;
-    var msg = "${date}日の作業カテゴリを選んでね".replace("${date}", date);
+    var msg = "(1)${date}日の[作業カテゴリ]を選んでね".replace("${date}", date);
 
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category", "title"]);
