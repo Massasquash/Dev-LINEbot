@@ -67,7 +67,9 @@ function getMessage(event, replyToken){
   } else {
     
     if(flag == null){
-      carouselTemplate(replyToken);
+      var msg = "＼(^o^)／";
+      reply(replyToken, msg);
+      return;
 
     } else {
     //WORK登録処理を進める
@@ -99,7 +101,7 @@ function getMessage(event, replyToken){
           var [title, date] = createDataForCalender(cache);
           var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
           var displayDate = year + "/" + month + "/" + day;
-          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}".replace("${displayDate}", displayDate).replace("${title}", title);
+          var msg = "Googleカレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
           
           //// カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
           // if(option === undefined){
