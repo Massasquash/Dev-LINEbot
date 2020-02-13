@@ -56,8 +56,8 @@ function getMessage(event, replyToken){
       replyMessages(replyToken, msg1, msg2);
 
     }else{
-      var msg = "[READ ME]\n●「おつかれ/お疲れ」と入れると日報を入力できるよ。\n●「履歴」と入れると過去の日報を確認できるよ。";
-      reply(replyToken, msg);
+      // ReadMeをカルーセルテンプレートで表示
+      carouselTemplate(replyToken);
     }
 
   } else {
