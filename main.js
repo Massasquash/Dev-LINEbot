@@ -225,13 +225,14 @@ function createDataForCalender(cache){
 function getCategories(){
   var categories = [];
   for(var index in userCategories){
-    if(userCategories[index][0] == null) {
+    if(userCategories[index][0] == "") {
       break;
     } else {
       categories[index] = userCategories[index][0];
     }
-  return categories;
   }
+  Logger.log(categories);
+  return categories;
 }
 
 
