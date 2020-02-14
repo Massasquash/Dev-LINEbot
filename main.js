@@ -78,7 +78,7 @@ function getMessage(event, replyToken){
         case "1":
           cache.put("flag", 2)
           cache.put("category", event.message.text);
-          var msg1 = "（２）[作業名]を入れてね。\n２行目以降には[作業の詳細]も入れられるよ（無くても問題ないよ）\n左下のマークをタップしたらキーボードが出るよ。\n↓こんな感じでよろしく";
+          var msg1 = "（２）[作業名]を入れてね。\n２行目以降には[作業の詳細]も入れられるよ（無くても問題ないよ）\n↓こんな感じでヨロシク\n（※左下のマークをタップしたらキーボードが出るよ！）";
           var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a";
           replyMessages(replyToken, msg1, msg2);
           break;
