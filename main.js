@@ -5,17 +5,21 @@ var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 // var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
 
-//カテゴリ一覧
-var categories =["圃場外", "小麦", "ビート", "馬鈴薯", "大豆", "長芋", "他"];
-
 //シート・データを取得
-var historySheet = spreadsheet.getSheetByName('作業履歴');
 var masterSheet = spreadsheet.getSheetByName('master');
 var readmeMessages = masterSheet.getRange('A2:C10').getValues();
 
+var historySheet = spreadsheet.getSheetByName('作業履歴');
+
+var userSheet = spreadsheet.getSheetByName('ユーザー設定');
+var _categories = userSheet.getRange('B5:B12').getValues();
+var categories = [];
+for(var index in _categories){
+  categories[index] = _categories[index][0];
+}
+
 //パラメータ
 var eventExp =  /(.*?)\n([\s\S]*)/;
-
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
 function doPost(e) {
@@ -144,7 +148,7 @@ function getPostback(event, replyToken){
     //日時選択アクションで取得した日付はstring型でdateに入る
     var date = event.postback.params.date;
     date = date.replace("-", "/").replace("-", "/");
-    var msg = "（1）${date}日の[作業カテゴリ]を選んでね".replace("${date}", date);
+    var msg = "（1）${date}の[作業カテゴリ]を選んでね".replace("${date}", date);
 
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category", "title"]);
@@ -228,10 +232,10 @@ function createDataForCalender(cache){
 
 
 
-  //スプレッドシートにログを表示するためのもの
-  function outputLog(label, text){
-    spreadsheet.getSheetByName("logs").appendRow(
-      [new Date(), label, text]
-    );
-    return;
-  }
+//スプレッドシートにログを表示するためのもの
+function outputLog(label, text){
+  spreadsheet.getSheetByName("logs").appendRow(
+    [new Date(), label, text]
+  );
+  return;
+}
