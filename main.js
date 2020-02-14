@@ -7,16 +7,11 @@ var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 
 //シート・データを取得
 var masterSheet = spreadsheet.getSheetByName('master');
-var readmeMessages = masterSheet.getRange('A2:C10').getValues();
-
 var historySheet = spreadsheet.getSheetByName('作業履歴');
-
 var userSheet = spreadsheet.getSheetByName('ユーザー設定');
-var _categories = userSheet.getRange('B5:B12').getValues();
-var categories = [];
-for(var index in _categories){
-  categories[index] = _categories[index][0];
-}
+
+var readmeMessages = masterSheet.getRange('A2:C10').getValues();
+var userCategories = userSheet.getRange('B5:B17').getValues();
 
 //パラメータ
 var eventExp =  /(.*?)\n([\s\S]*)/;
@@ -226,7 +221,18 @@ function createDataForCalender(cache){
 }
 
 
-
+//ユーザーカテゴリー取得
+function getCategories(){
+  var categories = [];
+  for(var index in userCategories){
+    if(userCategories[index][0] == null) {
+      break;
+    } else {
+      categories[index] = userCategories[index][0];
+    }
+  return categories;
+  }
+}
 
 
 
