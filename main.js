@@ -5,16 +5,19 @@ var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 // var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
 
-//シート・データを取得
 var masterSheet = spreadsheet.getSheetByName('master');
+var logsSheet = spreadsheet.getSheetByName("logs");
 var historySheet = spreadsheet.getSheetByName('作業履歴');
 var userSheet = spreadsheet.getSheetByName('ユーザー設定');
 
 var readmeMessages = masterSheet.getRange('A2:C10').getValues();
 var userCategories = userSheet.getRange('B5:B17').getValues();
 
-//パラメータ
+// パラメータ
 var eventExp =  /(.*?)\n([\s\S]*)/;
+
+
+
 
 // メイン処理。LINE botがユーザーからメッセージを受け取った時
 function doPost(e) {
@@ -44,6 +47,12 @@ function doPost(e) {
 
 // メッセージを受け取った時の処理
 function getMessage(event, replyToken){
+  if(event.message.type != "text"){
+    var msg = "／^o^＼";
+    reply(replyToken, msg);
+    return;
+  }
+
   var messageText = event.message.text;
 
   var cache = CacheService.getScriptCache();
@@ -66,9 +75,9 @@ function getMessage(event, replyToken){
     cache.remove("flag");
 
   } else {
-    
+    // 適当なメッセージに対する処理
     if(flag == null){
-      var msg = "＼(^o^)／";
+      var msg = "メニューを表示するには左下のボタンをタップしてね ＼(^o^)／";
       reply(replyToken, msg);
       return;
 
@@ -78,8 +87,8 @@ function getMessage(event, replyToken){
         case "1":
           cache.put("flag", 2)
           cache.put("category", event.message.text);
-          var msg1 = "（２）[作業名]を入れてね。\n２行目以降には[作業の詳細]も入れられるよ（無くても問題ないよ）\n↓こんな感じでヨロシク\n（※左下のマークをタップしたらキーボードが出るよ！）";
-          var msg2 = "追肥\n圃場●●と××\n硫安 20kg/10a";
+          var msg1 = "（２）[作業名]を入れてね。\n２行目以降には[作業の詳細]も入れられるよ（無くても問題ないよ）\n（※左下のマークをタップしたらキーボードが出るよ！）\n\n↓こんな感じでヨロシク";
+          var msg2 = "[作業名]追肥\n[詳細]圃場●●と××\n[詳細]硫安 20kg/10a";
           replyMessages(replyToken, msg1, msg2);
           break;
       
@@ -204,6 +213,7 @@ function getPostback(event, replyToken){
   quickReply(replyToken, msg);
 }
 
+
 //Googleカレンダーに登録する情報を作る処理
 function createDataForCalender(cache){
   var _date = cache.get("date");
@@ -231,7 +241,6 @@ function getCategories(){
       categories[index] = userCategories[index][0];
     }
   }
-  Logger.log(categories);
   return categories;
 }
 
@@ -241,7 +250,7 @@ function getCategories(){
 
 //スプレッドシートにログを表示するためのもの
 function outputLog(label, text){
-  spreadsheet.getSheetByName("logs").appendRow(
+  logsSheet.appendRow(
     [new Date(), label, text]
   );
   return;
