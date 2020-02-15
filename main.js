@@ -115,17 +115,14 @@ function getMessage(event, replyToken){
           var [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
           var displayDate = year + "/" + month + "/" + day;
 
-          var lastRow = historySheet.getLastRow();
-          var workId = historySheet.getRange(lastRow, 1).getValue() + 1;
-
           var msg = "カレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
 
           // カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
+          var option = { description: desc };
+          var event = calendar.createAllDayEvent(title, date, option);
           historySheet.appendRow(
-            [workId, displayDate, cache.get("category"), cache.get("title"), desc]
+            [displayDate, cache.get("category"), cache.get("title"), desc, event.getId()]
           );
-          var option = { description: desc + "\nID: " + workId };
-          calendar.createAllDayEvent(title, date, option);
           // カレンダー・シートへの登録処理ここまで
 
           reply(replyToken, msg);
