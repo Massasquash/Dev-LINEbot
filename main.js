@@ -137,9 +137,9 @@ function getMessage(event, replyToken){
 
 //ポストバックアクションを受け取った時の処理
 function getPostback(event, replyToken){
-  var reameAry = ["action=readme00", "action=readme01", "action=readme02",
-                  "action=readme10", "action=readme11", "action=readme12",
-                  "action=readme20", "action=readme21", "action=readme22"];
+  var readmeAry = ["action=readme00", "action=readme01", "action=readme02",
+                   "action=readme10", "action=readme11", "action=readme12",
+                   "action=readme20", "action=readme21", "action=readme22"];
 
   var cache = CacheService.getScriptCache();
 
@@ -162,7 +162,7 @@ function getPostback(event, replyToken){
     return;
 
   //使い方カルーセルテンプレートの入力により分岐を処理
-  } else if(reameAry.includes(event.postback.data)){
+  } else if(readmeAry.indexOf(event.postback.data) >= 0){
     msg = readmeMessages[readmeAry.indexOf(event.postback.data)][2];
     reply(replyToken, msg);s
     return;
