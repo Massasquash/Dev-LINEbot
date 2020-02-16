@@ -137,6 +137,10 @@ function getMessage(event, replyToken){
 
 //ポストバックアクションを受け取った時の処理
 function getPostback(event, replyToken){
+  var reameAry = ["action=readme00", "action=readme01", "action=readme02",
+                  "action=readme10", "action=readme11", "action=readme12",
+                  "action=readme20", "action=readme21", "action=readme22"];
+
   var cache = CacheService.getScriptCache();
 
   //日報入力ボタンテンプレートの入力により分岐を処理
@@ -158,51 +162,10 @@ function getPostback(event, replyToken){
     return;
 
   //使い方カルーセルテンプレートの入力により分岐を処理
-  } else if(event.postback.data == "action=readme00"){
-    msg = readmeMessages[0][2];
-    reply(replyToken, msg);
+  } else if(reameAry.includes(event.postback.data)){
+    msg = readmeMessages[readmeAry.indexOf(event.postback.data)][2];
+    reply(replyToken, msg);s
     return;
-
-  } else if(event.postback.data == "action=readme01"){
-    msg = readmeMessages[1][2];
-    reply(replyToken, msg);
-    return;
-
-  } else if(event.postback.data == "action=readme02"){
-    msg = readmeMessages[2][2];
-    reply(replyToken, msg);
-    return;
-
-  } else if(event.postback.data == "action=readme10"){
-    msg = readmeMessages[3][2];
-    reply(replyToken, msg);
-    return;
-
-  } else if(event.postback.data == "action=readme11"){
-    msg = readmeMessages[4][2];
-    reply(replyToken, msg);
-    return;
-
-  } else if(event.postback.data == "action=readme12"){
-    msg = readmeMessages[5][2];
-    reply(replyToken, msg);
-    return;
-
-  } else if(event.postback.data == "action=readme20"){
-    msg = readmeMessages[6][2];
-    reply(replyToken, msg);
-    return;
-
-  } else if(event.postback.data == "action=readme21"){
-    msg = readmeMessages[7][2];
-    reply(replyToken, msg);
-    return;
-
-  } else if(event.postback.data == "action=readme22"){
-    msg = readmeMessages[8][2];
-    reply(replyToken, msg);
-    return;
-
   }
 
   cache.put("flag", 1)
