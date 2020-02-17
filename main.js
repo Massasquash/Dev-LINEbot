@@ -109,7 +109,7 @@ function getMessage(event, replyToken){
               var desc = "";
             }
           }else {
-              msg = "もう一度入力してね";
+              msg = "もう一度[作業名][作業詳細]を入力してね";
               reply(replyToken, msg);
               return;
           }
