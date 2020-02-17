@@ -11,8 +11,7 @@ var historySheet = spreadsheet.getSheetByName('作業履歴');
 var userSheet = spreadsheet.getSheetByName('ユーザー設定');
 
 var readmeMessages = masterSheet.getRange('A2:C10').getValues();
-var userCategories = userSheet.getRange('B5:B17').getValues();
-var categories = getCategories();
+var categories = getCategories('B5:B17');
 
 
 // パラメータ
@@ -195,18 +194,18 @@ function createDataForCalender(cache){
 
 
 //ユーザーカテゴリー取得
-function getCategories(){
+function getCategories(range){
+  var _categories = userSheet.getRange(range).getValues();
   var categories = [];
-  for(var index in userCategories){
-    if(userCategories[index][0] == "") {
+  for(var i in _categories){
+    if(_categories[i][0] == "") {
       break;
     } else {
-      categories[index] = userCategories[index][0];
+      categories[i] = _categories[i][0];
     }
   }
   return categories;
 }
-
 
 
 
