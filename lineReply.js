@@ -102,7 +102,6 @@ function datetimePicker(replyToken){
 // クイックリプライを送信する処理
 function quickReply(replyToken, msg){
   
-  var categories = getCategories();
   var items = [];
   for(var index in categories){
     items.push(

@@ -12,6 +12,8 @@ var userSheet = spreadsheet.getSheetByName('ユーザー設定');
 
 var readmeMessages = masterSheet.getRange('A2:C10').getValues();
 var userCategories = userSheet.getRange('B5:B17').getValues();
+var categories = getCategories();
+
 
 // パラメータ
 var eventExp =  /(.*?)\n([\s\S]*)/;
@@ -94,21 +96,22 @@ function getMessage(event, replyToken){
       
         case "2":
           //タイトル・詳細を取得（ユーザー入力により分岐）
-          if(messageText.match(eventExp)){
-            var [fullText, title, desc] = messageText.match(eventExp);
-            //取得文字数を制限
-            title = title.substr(0, 20);
-            desc = desc.substr(0, 200);
-            cache.put("title", title);
+          if(categories.indexOf(messageText) < 0 ){
+            if(messageText.match(eventExp)){
+              var [fullText, title, desc] = messageText.match(eventExp);
+              //取得文字数を制限
+              title = title.substr(0, 20);
+              desc = desc.substr(0, 200);
+              cache.put("title", title);
 
-          } else if(messageText.match(/(.*)/)){
-            cache.put("title", messageText);
-            var desc = "";
-
-          } else {
-            msg = "もう一度入力してね";
-            reply(replyToken, msg);
-            return;
+            } else if(messageText.match(/(.*)/)){
+              cache.put("title", messageText);
+              var desc = "";
+            }
+          }else {
+              msg = "もう一度入力してね";
+              reply(replyToken, msg);
+              return;
           }
 
           var [title, date] = createDataForCalender(cache);
@@ -164,7 +167,7 @@ function getPostback(event, replyToken){
   //使い方カルーセルテンプレートの入力により分岐を処理
   } else if(readmeAry.indexOf(event.postback.data) >= 0){
     msg = readmeMessages[readmeAry.indexOf(event.postback.data)][2];
-    reply(replyToken, msg);s
+    reply(replyToken, msg);
     return;
   }
 
