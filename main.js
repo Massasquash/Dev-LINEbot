@@ -1,18 +1,23 @@
 //プロパティ・Googleサービスの読み込み
 var prop = PropertiesService.getScriptProperties().getProperties();
 
-var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-var calendar = CalendarApp.getCalendarById(prop.CALENDAR_ID);
-// var spreadsheet = SpreadsheetApp.openById(prop.SPREADSHEET_ID);
+//マスタデータの読み込み
+var masterSpreadsheet = SpreadsheetApp.openById(prop.MASTER_SPREADSHEET_ID);
+var masterSheet       = masterSpreadsheet.getSheetByName('master');
+var logsSheet         = masterSpreadsheet.getSheetByName('logs');
+var readmeMessages    = masterSheet.getRange('A2:C10').getValues();
 
-var masterSheet = spreadsheet.getSheetByName('master');
-var logsSheet = spreadsheet.getSheetByName("logs");
-var historySheet = spreadsheet.getSheetByName('作業履歴');
-var userSheet = spreadsheet.getSheetByName('ユーザー設定');
+//ユーザーデータの読み込み
+var calendar          = CalendarApp.getCalendarById(prop.CALENDAR_ID);
+var carendarUrl       = prop.CALENDAR_URL;
+var spreadsheet       = SpreadsheetApp.getActiveSpreadsheet();
+var spreadsheetUrl    = spreadsheet.getUrl();
+var historySheet      = spreadsheet.getSheetByName('作業履歴');
+var userSheet         = spreadsheet.getSheetByName('ユーザー設定');
 
-var readmeMessages = masterSheet.getRange('A2:C10').getValues();
-var userCategories = userSheet.getRange('B5:B17').getValues();
-var categories = getCategories();
+
+var userCategories    = userSheet.getRange('B5:B17').getValues();
+var categories        = getCategories();
 
 
 // パラメータ
@@ -67,8 +72,8 @@ function getMessage(event, replyToken){
     cache.remove("flag");
 
   }else if(messageText.match("履歴を見る")){
-    var msg1 = "カレンダー\n" + prop.CALENDAR_URL;
-    var msg2 = "シート\n" + prop.SPREADSHEET_URL;
+    var msg1 = "カレンダー\n" + carendarUrl;
+    var msg2 = "シート\n" + spreadsheetUrl;
     replyMessages(replyToken, msg1, msg2);
     cache.remove("flag");
 
