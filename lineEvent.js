@@ -1,0 +1,7 @@
+function follow(event, replyToken){
+
+  msg1 = "フォローしたよ";
+  msg2 = "テストだよ";
+  replyMessages(replyToken, msg1, msg2)
+
+}
