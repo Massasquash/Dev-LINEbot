@@ -33,7 +33,7 @@ function doPost(e) {
       getMessage(event, replyToken);
     } else if(event.type == "postback") {
       getPostback(event, replyToken);
-    } else if(event.type == "follow")
+    } else if(event.type == "follow"){
       follow(event, replyToken);
     }
   } catch(e) {
