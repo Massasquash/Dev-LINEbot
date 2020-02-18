@@ -1,25 +1,20 @@
 //プロパティ・Googleサービスの読み込み
 var prop = PropertiesService.getScriptProperties().getProperties();
-    outputLog("0", "gloval", masterSpreadsheet);
+
 //マスタデータの読み込み
 var masterSpreadsheet = SpreadsheetApp.openById(prop.MASTER_SPREADSHEET_ID);
-    outputLog("0", "gloval", masterSpreadsheet);
 var masterSheet       = masterSpreadsheet.getSheetByName('master');
 var logsSheet         = masterSpreadsheet.getSheetByName('logs');
 var readmeMessages    = masterSheet.getRange('A2:C10').getValues();
-    outputLog("1", "gloval", logsSheet);
 
 //ユーザーデータの読み込み
 var calendar          = CalendarApp.getCalendarById(prop.CALENDAR_ID);
 var carendarUrl       = prop.CALENDAR_URL;
 var spreadsheet       = SpreadsheetApp.getActiveSpreadsheet();
-    outputLog("2", "gloval)", spreadsheet);
 var spreadsheetUrl    = spreadsheet.getUrl();
-    outputLog("3", "gloval)", spreadsheetUrl);
 var historySheet      = spreadsheet.getSheetByName('作業履歴');
 var userSheet         = spreadsheet.getSheetByName('ユーザー設定');
 var categories        = getCategories('B5:B17');
-    outputLog("4", "gloval)", categories);
 
 var eventExp =  /(.*?)\n([\s\S]*)/;
 
