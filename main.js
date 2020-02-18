@@ -11,7 +11,7 @@ var historySheet = spreadsheet.getSheetByName('作業履歴');
 var userSheet = spreadsheet.getSheetByName('ユーザー設定');
 
 var readmeMessages = masterSheet.getRange('A2:C10').getValues();
-var categories = geta
+var categories = getCategories('B5:B17');
 // パラメータ
 var eventExp =  /(.*?)\n([\s\S]*)/;
 
