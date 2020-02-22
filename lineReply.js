@@ -60,7 +60,7 @@ function replyMessages(replyToken, msg1, msg2){
 
 
 // ラインにテキストメッセージと画像を送る処理。
-function replyTextPicture(replyToken, msg, imgUrl){
+function replyTextPicture(replyToken, msg, imgUrl, tmbUrl){
   var message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
@@ -70,7 +70,7 @@ function replyTextPicture(replyToken, msg, imgUrl){
       },{
         "type": "image",
         "originalContentUrl": imgUrl,
-        "previewImageUrl": imgUrl
+        "previewImageUrl": tmbUrl
       }
     ]
   };
