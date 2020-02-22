@@ -5,7 +5,7 @@ var prop = PropertiesService.getScriptProperties().getProperties();
 var masterSpreadsheet = SpreadsheetApp.openById(prop.MASTER_SPREADSHEET_ID);
 var masterSheet       = masterSpreadsheet.getSheetByName('master');
 var logsSheet         = masterSpreadsheet.getSheetByName('logs');
-var usersSheet         = masterSpreadsheet.getSheetByName('users');
+var usersSheet        = masterSpreadsheet.getSheetByName('users');
 var readmeMessages    = masterSheet.getRange('A2:C10').getValues();
 
 //ユーザーデータの読み込み
@@ -29,7 +29,7 @@ function doPost(e) {
   }
 
   try{
-    outputLog("doPost(event)", event);
+    outputLog("post event", event);
     if(event.type == "message") {
       getMessage(event, replyToken);
     } else if(event.type == "postback") {
@@ -38,7 +38,7 @@ function doPost(e) {
       follow(event, replyToken);
     }
   } catch(e) {
-    outputLog(event.source.userId, "error:" + e.lineNumber, e.message);
+    outputLog("error:" + e.lineNumber, e.message);
     reply(replyToken, "なんかおかしいよ。もう一度やってみてね\n");
     return;
   }
@@ -214,9 +214,9 @@ function getCategories(range){
 
 
 //スプレッドシートにログを表示するためのもの
-function outputLog(user, label, text){
+function outputLog(label, text){
   logsSheet.appendRow(
-    [new Date(), user, label, text]
+    [new Date(), label, text]
   );
   return;
 }
