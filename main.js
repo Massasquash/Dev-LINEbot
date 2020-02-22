@@ -5,6 +5,7 @@ var prop = PropertiesService.getScriptProperties().getProperties();
 var masterSpreadsheet = SpreadsheetApp.openById(prop.MASTER_SPREADSHEET_ID);
 var masterSheet       = masterSpreadsheet.getSheetByName('master');
 var logsSheet         = masterSpreadsheet.getSheetByName('logs');
+var usersSheet         = masterSpreadsheet.getSheetByName('users');
 var readmeMessages    = masterSheet.getRange('A2:C10').getValues();
 
 //ユーザーデータの読み込み

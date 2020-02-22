@@ -69,8 +69,8 @@ function replyTextPicture(replyToken, msg, imgUrl){
         "text" : msg
       },{
         "type": "image",
-        "originalContentUrl": "https://example.com/original.jpg",
-        "previewImageUrl": "https://example.com/preview.jpg"
+        "originalContentUrl": imgUrl,
+        "previewImageUrl": imgUrl
       }
     ]
   };
