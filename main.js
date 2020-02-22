@@ -28,11 +28,13 @@ function doPost(e) {
   }
 
   try{
-    outputLog(event.source.userId, "doPost(event)", event);
+    outputLog("doPost(event)", event);
     if(event.type == "message") {
       getMessage(event, replyToken);
     } else if(event.type == "postback") {
       getPostback(event, replyToken);
+    } else if(event.type == "follow"){
+      follow(event, replyToken);
     }
   } catch(e) {
     outputLog(event.source.userId, "error:" + e.lineNumber, e.message);
@@ -102,7 +104,8 @@ function getMessage(event, replyToken){
               cache.put("title", title);
 
             } else if(messageText.match(/(.*)/)){
-              cache.put("title", messageText);
+              title = messageText.substr(0, 20);              
+              cache.put("title", title);
               var desc = "";
             }
           }else {
