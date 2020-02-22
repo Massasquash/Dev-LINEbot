@@ -38,7 +38,7 @@ function doPost(e) {
     }
   } catch(e) {
     outputLog("error:" + e.lineNumber , e.message);
-    reply(replyToken, "なんかおかしいよ。エラーを確認してね\n" + e.message);
+    reply(replyToken, "なんかおかしいよ。もう一度やってみてね");
     return;
   }
 
@@ -104,11 +104,12 @@ function getMessage(event, replyToken){
               cache.put("title", title);
 
             } else if(messageText.match(/(.*)/)){
+              title = messageText.substr(0, 20);
               cache.put("title", messageText);
               var desc = "";
             }
           }else {
-              msg = "もう一度[作業名][作業詳細]を入力してね";
+              msg = "もう一度入力してね";
               reply(replyToken, msg);
               return;
           }
