@@ -1,4 +1,3 @@
-//プロパティ・Googleサービスの読み込み
 var prop = PropertiesService.getScriptProperties().getProperties();
 
 var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -34,10 +33,10 @@ function doPost(e) {
     } else if(event.type == "postback") {
       getPostback(event, replyToken);
     } else if(event.type == "follow"){
-      follow(event, replyToken);
+      follow(replyToken);
     }
   } catch(e) {
-    outputLog("error:" + e.lineNumber , e.message);
+    outputLog("error:" + e.fileName + " " +　e.lineNumber , e.message);
     reply(replyToken, "なんかおかしいよ。もう一度やってみてね");
     return;
   }
