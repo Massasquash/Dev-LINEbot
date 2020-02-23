@@ -54,6 +54,32 @@ function replyMessages(replyToken, msg1, msg2){
   UrlFetchApp.fetch(replyUrl, options);
 }
 
+// ラインにテキストメッセージと画像を送る処理。
+function replyMessageAndPicture(replyToken, msg, imgUrl, tmbUrl){
+  var message = {
+    "replyToken" : replyToken,
+    "notificationDisabled" : true,
+    "messages" : [{
+        "type" : "text",
+        "text" : msg
+      },{
+        "type": "image",
+        "originalContentUrl": imgUrl,
+        "previewImageUrl": tmbUrl
+      }
+    ]
+  };
+
+  var options = {
+    "method" : "post",
+    "headers" : header,
+    "payload" : JSON.stringify(message)
+  };
+
+  UrlFetchApp.fetch(replyUrl, options);
+}
+
+
 
 // ボタンテンプレートを出してから日時選択アクションを送る処理
 function datetimePicker(replyToken){
