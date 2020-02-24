@@ -1,4 +1,8 @@
-//var richmenuId = "";
+//初期設定：
+//postRichMenuImage関数を実行してrichmenuを作成する（初期設定時に一度のみ）
+//取得したrichmenuIdをスクリプトプロパティに記入
+
+var richmenuId = prop.RICHMENU_ID;
 
 
 
@@ -14,7 +18,7 @@ function follow(event, replyToken){
     var tmbId   = "1tikY01qfm3G4OYUlG3y5-w4LzBo8u6-K";
     var tmbUrl  = "https://drive.google.com/uc?id=" + tmbId;
     replyMessages(replyToken, msg, imgUrl, tmbUrl);
-  }
+}
 
 
 //以下、リッチメニュー に関する処理
@@ -36,8 +40,19 @@ function setDefaultRichmenu(){
 }
 
 
-//次のpostRichMenuImage関数を実行してrichmenuを作成する（初期設定時に一度のみ）
-//取得したrichmenuIdをファイル上部に記入
+
+
+
+
+
+
+
+
+
+
+
+
+//以下、初期設定用
 function postRichMenuImage(){
 
   var richmenuId = getRichmenuId();
@@ -59,7 +74,9 @@ function postRichMenuImage(){
     'payload': blob
   };
 
-  UrlFetchApp.fetch(richmenuUrl, options);
+  var response = UrlFetchApp.fetch(richmenuUrl, options);
+  
+  outputLog("getRichmenuId", "Initialize", response);
 
 }
 
@@ -122,8 +139,9 @@ function getRichmenuId(){
     'payload' : JSON.stringify(richmenuObject)
   };
 
-  richmenuId = UrlFetchApp.fetch(richmenuUrl, options);
-
+  var response = UrlFetchApp.fetch(richmenuUrl, options);
+  
+  var richmenuId = JSON.parse(response).richMenuId;
   outputLog("getRichmenuId", "Initialize", richmenuId);
 
   return richmenuId;
