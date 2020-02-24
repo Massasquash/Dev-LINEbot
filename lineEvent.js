@@ -2,7 +2,7 @@
 //postRichMenuImage関数を実行してrichmenuを作成する（初期設定時に一度のみ）
 //取得したrichmenuIdをスクリプトプロパティに記入
 
-var richmenuId = prop.RICHMENU_ID;
+var defaultRichMenuId = prop.RICHMENU_ID;
 
 
 
@@ -25,18 +25,18 @@ function follow(event, replyToken){
 //デフォルトメニューに設定する関数（フォロー時に実行される）
 function setDefaultRichmenu(){
 
-  var url = "https://api.line.me/v2/bot/user/all/richmenu/" + richmenuId ;
-  var header = {
+  var richMenuUrl = "https://api.line.me/v2/bot/user/all/richmenu/" + defaultRichMenuId ;
+  var richMenuHeader = {
     "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN,
     "payload":{}
   };
 
   var options = {
-    'headers': header,  
+    'headers': richMenuHeader,  
     'method': 'post',
   };
 
-  UrlFetchApp.fetch(url, options);
+  UrlFetchApp.fetch(richMenuUrl, options);
 }
 
 
@@ -55,39 +55,39 @@ function setDefaultRichmenu(){
 //以下、初期設定用
 function postRichMenuImage(){
 
-  var richmenuId = getRichmenuId();
-  var richmenuUrl = "https://api-data.line.me/v2/bot/richmenu/" + richmenuId + "/content";
+  var richMenuId = getRichMenuId();
+  var richMenuUrl = "https://api-data.line.me/v2/bot/richmenu/" + richMenuId + "/content";
 
   var content = "1QSrUQ3WJqhZvjoOq0rTB1WKEuW2hKjJR";
   var contentType = "image/png";
 
   var blob = DriveApp.getFileById(content).getBlob();
 
-  var richmenuHeader = {
+  var richMenuHeader = {
     "Content-Type" : contentType,
     "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
   };
   
   var options = {
-    'headers': richmenuHeader,  
+    'headers': richMenuHeader,  
     'method': 'post',
     'payload': blob
   };
 
-  var response = UrlFetchApp.fetch(richmenuUrl, options);
+  var response = UrlFetchApp.fetch(richMenuUrl, options);
   
   outputLog("getRichmenuId", "Initialize", response);
 
 }
 
 function getRichmenuId(){
-  var richmenuUrl = "https://api.line.me/v2/bot/richmenu";
-  var richmenuHeader = {
+  var richMenuUrl = "https://api.line.me/v2/bot/richmenu";
+  var richMenuHeader = {
   "Content-Type" : "application/json",
   "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
   };
 
-  var richmenuObject = {
+  var richMenuObject = {
     "size" : {
       "width" : 1200,
       "height" : 405
@@ -134,16 +134,16 @@ function getRichmenuId(){
   };
 
   var options = {
-    'headers': richmenuHeader,  
+    'headers': richMenuHeader,  
     'method': 'post',
-    'payload' : JSON.stringify(richmenuObject)
+    'payload' : JSON.stringify(richMenuObject)
   };
 
-  var response = UrlFetchApp.fetch(richmenuUrl, options);
+  var response = UrlFetchApp.fetch(richMenuUrl, options);
   
-  var richmenuId = JSON.parse(response).richMenuId;
-  outputLog("getRichmenuId", "Initialize", richmenuId);
+  var richMenuId = JSON.parse(response).richMenuId;
+  outputLog("getRichmenuId", "Initialize", richMenuId);
 
-  return richmenuId;
+  return richMenuId;
 
 }
