@@ -1,4 +1,3 @@
-//プロパティ・Googleサービスの読み込み
 var prop = PropertiesService.getScriptProperties().getProperties();
 
 //マスタデータの読み込み
@@ -29,7 +28,7 @@ function doPost(e) {
   }
 
   try{
-    outputLog("post event", event);
+    outputLog("post event", "", event);
     if(event.type == "message") {
       getMessage(event, replyToken);
     } else if(event.type == "postback") {
@@ -38,7 +37,7 @@ function doPost(e) {
       follow(event, replyToken);
     }
   } catch(e) {
-    outputLog("error:" + e.lineNumber, e.message);
+    outputLog("error", e.fileName + ":" +　e.lineNumber, e.message);
     reply(replyToken, "なんかおかしいよ。もう一度やってみてね\n");
     return;
   }
@@ -214,9 +213,9 @@ function getCategories(range){
 
 
 //スプレッドシートにログを表示するためのもの
-function outputLog(label, text){
+function outputLog(text, label ,description){
   logsSheet.appendRow(
-    [new Date(), label, text]
+    [new Date(), text, label ,description]
   );
   return;
 }
