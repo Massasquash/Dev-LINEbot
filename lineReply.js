@@ -111,6 +111,11 @@ function datetimePicker(replyToken){
               "mode": "date"
             },{
               "type" : "postback",
+              "label" : "作業カテゴリを編集する",
+              "data" : "action=editcategory",
+              "displayText": "作業カテゴリを編集する"
+            },{
+              "type" : "postback",
               "label" : "やっぱりやめる",
               "data" : "action=cancel",
               "displayText": "やっぱりやめる"

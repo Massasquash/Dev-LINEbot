@@ -166,6 +166,11 @@ function getPostback(event, replyToken){
     var date = event.postback.params.date;
     date = date.replace("-", "/").replace("-", "/");
     var msg = "（1）${date}にやった作業の[カテゴリ]を選んでね".replace("${date}", date);
+  
+  } else if(event.postback.data == "action=editcategory"){
+    var msg = "↓を開いてカテゴリを編集してね\n" + webUrl;
+    reply(replyToken, msg);
+    return;
 
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category", "title"]);
