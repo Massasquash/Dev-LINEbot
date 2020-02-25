@@ -19,8 +19,17 @@ var categories        = getCategories('B5:B17');
 var eventExp =  /(.*?)\n([\s\S]*)/;
 
 
-// メイン処理。LINE botがユーザーからメッセージを受け取った時
 function doPost(e) {
+  //ポストデータがWEBフォームからのものか、LINEからのものか判定
+  //パラメータのオブジェクトが空でない（キーの配列の長さが0でない）ならWEBフォームの処理へ
+    if(Object.keys(e.parameter).length > 0){
+      outputLog("doPost to postCategories", "e.parameter:" ,e.parameter);
+      postCategories(e);
+      // スプレッドシートのデータ挿入後、元の画面に戻す
+      return HtmlService.createTemplateFromFile("form").evaluate();
+    }
+  
+  //LINE botがユーザーからメッセージを受け取った時の処理
   var event = JSON.parse(e.postData.contents).events[0];
   var replyToken = event.replyToken;
   if(typeof replyToken === 'undefined'){
@@ -150,13 +159,13 @@ function getPostback(event, replyToken){
   if(event.postback.data == "action=today"){
     //今日の日付を選んだ場合はdateは"0"を入れる
     var date = "0";
-    var msg = "（1）今日の作業カテゴリを選んでね";
+    var msg = "（1）今日やった作業の[カテゴリ]を選んでね";
 
   } else if(event.postback.data == "action=settime"){
     //日時選択アクションで取得した日付はstring型でdateに入る
     var date = event.postback.params.date;
     date = date.replace("-", "/").replace("-", "/");
-    var msg = "（1）${date}の[作業カテゴリ]を選んでね".replace("${date}", date);
+    var msg = "（1）${date}にやった作業の[カテゴリ]を選んでね".replace("${date}", date);
 
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category", "title"]);
