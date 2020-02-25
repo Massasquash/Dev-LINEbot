@@ -219,24 +219,6 @@ function carouselTemplate(replyToken) {
                   "data": "action=readme12"
                 }
               ]
-            },{
-              "title" : "使い方",
-              "text" : "その他",
-              "actions" : [
-                {
-                  "type" : "postback",
-                  "label" : readmeMessages[6][1],
-                  "data": "action=readme20"
-                },{
-                  "type" : "postback",
-                  "label" : readmeMessages[7][1],
-                  "data": "action=readme21"
-                },{
-                  "type" : "postback",
-                  "label" : readmeMessages[8][1],
-                  "data": "action=readme22"
-                }
-              ]
             }
           ]
         }
