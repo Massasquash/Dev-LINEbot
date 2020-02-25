@@ -3,7 +3,7 @@
 //取得したrichmenuIdがRICH_MENU_IDとしてスクリプトプロパティに自動記入されていることを確認
 //最後にwebUrlを以下に記入する（手動）
 
-var webUrl = "https://script.google.com/macros/s/AKfycbyt4pwDsRxNAzGL3xlWHDA1q4CafuaGctw3d4OzzwZ-giKzgxQ/exec";
+var webUrl = "https://script.google.com/macros/s/AKfycbz8ySFmKGvBj5dRFjNRPTCQcdy9vxa-quSCKLhA8q9E3ofKsj0/exec";
 
 
 //webフォームからの入力に関する処理
@@ -42,16 +42,19 @@ function follow(event, replyToken){
 //以下、初期設定用
 //LINE messaging API リッチメニューに関する操作
 function initiallize(){
-  postRichMenuImage();
-  setDefaultRichMenu();
-  outputLog("initiallize", "プロパティ登録状況", prop.RICH_MENU_ID);
+  outputLog("initiallize", "Start!", "");
+  var richMenuId = getRichMenuId();
+  postRichMenuImage(richMenuId);
+  setDefaultRichMenu(richMenuId);
+  PropertiesService.getScriptProperties().setProperty("RICH_MENU_ID", richMenuId);
+  outputLog("initiallize", "Finish!");
 }
 
 
 //デフォルトメニューに設定する関数（フォロー時に実行される）
-function setDefaultRichMenu(){
+function setDefaultRichMenu(richMenuId){
 
-  var richMenuUrl = "https://api.line.me/v2/bot/user/all/richmenu/" + prop.RICH_MENU_ID ;
+  var richMenuUrl = "https://api.line.me/v2/bot/user/all/richmenu/" + richMenuId ;
   var richMenuHeader = {
     "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
   };
@@ -61,16 +64,18 @@ function setDefaultRichMenu(){
     'method': 'post',
   };
 
-  UrlFetchApp.fetch(richMenuUrl, options);  
+  UrlFetchApp.fetch(richMenuUrl, options); 
+  
+  outputLog("setDefaultRichMenu", "OK", richMenuId);
 }
 
 
 
 
 
-function postRichMenuImage(){
+function postRichMenuImage(richMenuId){
 
-  var richMenuUrl = "https://api-data.line.me/v2/bot/richmenu/" + prop.RICH_MENU_ID + "/content";
+  var richMenuUrl = "https://api-data.line.me/v2/bot/richmenu/" + richMenuId + "/content";
 
   var content = "1QSrUQ3WJqhZvjoOq0rTB1WKEuW2hKjJR";
   var contentType = "image/png";
@@ -89,10 +94,10 @@ function postRichMenuImage(){
   };
 
   var response = UrlFetchApp.fetch(richMenuUrl, options);
-  outputLog("postRichMenuImage", "Initialize", response);
-    
-  return;
+  outputLog("postRichMenuImage", "OK", response);
 }
+
+
 
 function getRichMenuId(){
   var richMenuUrl = "https://api.line.me/v2/bot/richmenu";
@@ -156,8 +161,7 @@ function getRichMenuId(){
   var response = UrlFetchApp.fetch(richMenuUrl, options);
   
   var richMenuId = JSON.parse(response).richMenuId;
-  PropertiesService.getScriptProperties().setProperty("RICH_MENU_ID", richMenuId); 
-  outputLog("getRichMenuId", "Initialize", richMenuId);
+  outputLog("getRichMenuId", "OK", richMenuId);
 
-  return;
+  return richMenuId;
 }
