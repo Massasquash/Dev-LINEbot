@@ -1,25 +1,36 @@
 //初期設定について：
 //initiallize()関数を実行してrichmenuを作成する（初期設定時に一度のみ）
 //取得したrichmenuIdがRICH_MENU_IDとしてスクリプトプロパティに自動記入されていることを確認
+//最後にwebUrlを以下に記入する（手動）
+
+var webUrl = "https://script.google.com/macros/s/AKfycbyt4pwDsRxNAzGL3xlWHDA1q4CafuaGctw3d4OzzwZ-giKzgxQ/exec";
 
 
+//webフォームからの入力に関する処理
+function doGet(){
+  return HtmlService.createTemplateFromFile("form").evaluate();
+} 
+
+function postCategories(e) {
+  // 「e.parameter.フォーム名(inputタグの名前)」 でフォームから送信されたパラメータをオブジェクトで取得できる
+  var entryForm = ["category1", "category2", "category3", "category4", "category5", "category6", "category7", "category8", "category9", "category10", "category11", "category12" ,"category13"]
+  
+  for(var i=0; i<13; i++){
+    userSheet.getRange(i+5,2).setValue(e.parameter[entryForm[i]]);
+  }
+  return
+}
 
 
+//LINE フォロー時の処理
 function follow(event, replyToken){
     var userId = event.source.userId;
     usersSheet.appendRow([userId]);
 
     var msg1 = "【農作業記録アシスタント】\n今日の作業をラインで入力！作業日誌を簡単に入力してGoogleカレンダーに登録するアプリ。\n使ってみた感想を教えてね\n\nまずは↓のページを開いて、自分用の「作業カテゴリ」を登録してみよう\n\n登録が終わったら画面一番下の「メニュー」を開いて「日報を入力」をタップしてみよう";
-    var msg2 = "https://script.google.com/macros/s/AKfycbyt4pwDsRxNAzGL3xlWHDA1q4CafuaGctw3d4OzzwZ-giKzgxQ/exec"
-    replyMessages(replyToken, msg1, msg2);
+    replyMessages(replyToken, msg1, webUrl);
 }
 
-
-
-
-
-
-//以下、リッチメニュー に関する処理
 
 
 
@@ -29,6 +40,7 @@ function follow(event, replyToken){
 
 
 //以下、初期設定用
+//LINE messaging API リッチメニューに関する操作
 function initiallize(){
   postRichMenuImage();
   setDefaultRichMenu();

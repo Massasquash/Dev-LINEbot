@@ -1,3 +1,5 @@
+var prop = PropertiesService.getScriptProperties().getProperties();
+
 //LINE Messagin apiパラメータ
 var replyUrl = "https://api.line.me/v2/bot/message/reply";
 var header = {
