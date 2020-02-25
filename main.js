@@ -16,6 +16,8 @@ var historySheet      = spreadsheet.getSheetByName('作業履歴');
 var userSheet         = spreadsheet.getSheetByName('ユーザー設定');
 var categories        = getCategories('B5:B17');
 
+var webUrl = prop.WEB_URL;
+
 var eventExp =  /(.*?)\n([\s\S]*)/;
 
 

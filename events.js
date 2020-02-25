@@ -1,9 +1,7 @@
 //初期設定について：
 //initiallize()関数を実行してrichmenuを作成する（初期設定時に一度のみ）
 //取得したrichmenuIdがRICH_MENU_IDとしてスクリプトプロパティに自動記入されていることを確認
-//最後にwebUrlを以下に記入する（手動）
-
-var webUrl = "https://script.google.com/macros/s/AKfycbz8ySFmKGvBj5dRFjNRPTCQcdy9vxa-quSCKLhA8q9E3ofKsj0/exec";
+//最後にwebUrlをスクリプトプロパティに記入する（手動）
 
 
 //webフォームからの入力に関する処理
