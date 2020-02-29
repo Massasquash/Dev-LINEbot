@@ -49,7 +49,7 @@ function initiallize(){
 }
 
 
-//デフォルトメニューに設定する関数（フォロー時に実行される）
+//デフォルトメニューに設定する関数
 function setDefaultRichMenu(richMenuId){
 
   var richMenuUrl = "https://api.line.me/v2/bot/user/all/richmenu/" + richMenuId ;
