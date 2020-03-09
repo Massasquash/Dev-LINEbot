@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">    
+  </head>
+  <body>
+
+   <h2>カテゴリを登録</h2>
+   <p>カテゴリは例えば<br>
+   　・作物名や品種名<br>
+   　・作業の種類（防除、追肥…）<br>
+   とかにしておくと便利。</p>
+   <p>記入したら「送信する」ボタンを押してLINEに戻ってね！<br>
+   （最大１３個/全て埋めなくてもOK）</p>
+   
+    <form method="post" action="<?= webUrl ?>">
+      <table>
+       <tr>
+        <th></th>
+        <th>↓ここに入力</th>
+        <th>現在のカテゴリ</th>
+      <tr>
+        <td>１:</td>
+        <td><input type="text" name="category1" value="<?= categories[0] ?>"></td>
+        <td><?= categories[0] ?></td>
+      </tr>
+      <tr>
+        <td>２:</td>
+        <td><input type="text" name="category2" value="<?= categories[1] ?>"></td>
+        <td><?= categories[1] ?></td>
+      </tr>
+      <tr>
+        <td>３:</td>
+        <td><input type="text" name="category3" value="<?= categories[2] ?>"></td>
+        <td><?= categories[2] ?></td>
+      </tr>
+      <tr>
+        <td>４:</td>
+        <td><input type="text" name="category4" value="<?= categories[3] ?>"></td>
+        <td><?= categories[3] ?></td>
+      </tr>      
+      <tr>
+        <td>５:</td>
+        <td><input type="text" name="category5" value="<?= categories[4] ?>"></td>
+        <td><?= categories[4] ?></td>
+      </tr>
+      <tr>
+        <td>６:</td>
+        <td><input type="text" name="category6" value="<?= categories[5] ?>"></td>
+        <td><?= categories[5] ?></td>
+      </tr>      
+      <tr>
+        <td>７:</td>
+        <td><input type="text" name="category7" value="<?= categories[6] ?>"></td>
+        <td><?= categories[6] ?></td>
+      </tr>
+      <tr>
+        <td>８:</td>
+        <td><input type="text" name="category8" value="<?= categories[7] ?>"></td>
+        <td><?= categories[7] ?></td>
+      </tr> 
+      <tr>
+        <td>９:</td>
+        <td><input type="text" name="category9" value="<?= categories[8] ?>"></td>
+        <td><?= categories[8] ?></td>
+      </tr>
+      <tr>
+        <td>１０:</td>
+        <td><input type="text" name="category10" value="<?= categories[9] ?>"></td>
+        <td><?= categories[9] ?></td>
+      </tr>
+      <tr>
+        <td>１１:</td>
+        <td><input type="text" name="category11" value="<?= categories[10] ?>"></td>
+        <td><?= categories[10] ?></td>
+      </tr> 
+      <tr>
+        <td>１２:</td>
+        <td><input type="text" name="category12" value="<?= categories[11] ?>"></td>
+        <td><?= categories[11] ?></td>
+      </tr>      
+      <tr>
+        <td>１３:</td>
+        <td><input type="text" name="category13" value="<?= categories[12] ?>"></td>
+        <td><?= categories[12] ?></td>
+      </tr> 
+     </table>
+
+     <br>
+     <input type="submit" value="送信する"><br><br>
+     <hr>
+    </form>
+
+  </body>
+</html>
