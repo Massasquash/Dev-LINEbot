@@ -59,66 +59,83 @@ function replyMessages(replyToken, msg1, msg2){
 }
 
 
-// ラインにテキストメッセージと画像を送る処理。
-function replyTextPicture(replyToken, msg, imgUrl, tmbUrl){
-  var message = {
-    "replyToken" : replyToken,
-    "notificationDisabled" : true,
-    "messages" : [{
-        "type" : "text",
-        "text" : msg
-      },{
-        "type": "image",
-        "originalContentUrl": imgUrl,
-        "previewImageUrl": tmbUrl
-      }
-    ]
-  };
+// // ラインにテキストメッセージと画像を送る処理。
+// function replyTextPicture(replyToken, msg, imgUrl, tmbUrl){
+//   var message = {
+//     "replyToken" : replyToken,
+//     "notificationDisabled" : true,
+//     "messages" : [{
+//         "type" : "text",
+//         "text" : msg
+//       },{
+//         "type": "image",
+//         "originalContentUrl": imgUrl,
+//         "previewImageUrl": tmbUrl
+//       }
+//     ]
+//   };
 
-  var options = {
-    "method" : "post",
-    "headers" : header,
-    "payload" : JSON.stringify(message)
-  };
+//   var options = {
+//     "method" : "post",
+//     "headers" : header,
+//     "payload" : JSON.stringify(message)
+//   };
 
-  UrlFetchApp.fetch(replyUrl, options);
-}
+//   UrlFetchApp.fetch(replyUrl, options);
+// }
 
 
 
-// ボタンテンプレートを出してから日時選択アクションを送る処理
-function datetimePicker(replyToken){
+// 日誌を入力・編集：カルーセルテンプレートを出す。日時選択アクション含む
+function selectDiary(replyToken){
   var message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [
       {
         "type" : "template",
-        "altText" : "日報登録",
+        "altText" : "日報の入力・編集",
         "template" : {
-          "type" : "buttons",
-          "title" : "日報登録",
-          "text" : "今日も一日お疲れ様でした！",
-          "actions" :[
+          "type" : "carousel",
+          "columns" : [
             {
-              "type": "postback",
-              "label":"今日の日報を書く",
-              "data": "action=today",
+              "title" : "日報を入力する",
+              "text" : "今日も一日お疲れさま！\n操作を選んでね",
+              "actions" :[
+                {
+                  "type": "postback",
+                  "label":"今日の日報を書く",
+                  "data": "action=today",
+                },{
+                  "type": "datetimepicker",
+                  "label": "日付を選んで日報を書く",
+                  "data": "action=settime",
+                  "mode": "date"
+                },{
+                  "type" : "postback",
+                  "label" : "やっぱりやめる",
+                  "data" : "action=cancel",
+                  "displayText": "やっぱりやめる"
+                }
+              ]
             },{
-              "type": "datetimepicker",
-              "label": "日付を選んで日報を書く",
-              "data": "action=settime",
-              "mode": "date"
-            },{
-              "type" : "postback",
-              "label" : "作業カテゴリを編集する",
-              "data" : "action=editcategory",
-              "displayText": "作業カテゴリを編集する"
-            },{
-              "type" : "postback",
-              "label" : "やっぱりやめる",
-              "data" : "action=cancel",
-              "displayText": "やっぱりやめる"
+              "title" : "日報を編集する",
+              "text" : "修正する？",
+              "actions" :[
+                {
+                  "type": "postback",
+                  "label":"さっきの日報を修正する",
+                  "data": "action=editdiary",
+                },{
+                  "type": "postback",
+                  "label":"さっきの日報を取り消す",
+                  "data": "action=deletediary",
+                },{
+                  "type" : "message",
+                  "label" : "過去の記録を編集する",
+                  "text": "Googleカレンダーから直接編集してください！"
+                }
+              ]
             }
           ]
         }
@@ -174,6 +191,48 @@ function quickReply(replyToken, msg){
 
   UrlFetchApp.fetch(replyUrl, options);
 }
+
+
+// 履歴を見る：ボタンテンプレートを出してからURLアクションを送る処理
+function selectHistory(replyToken){
+  var message = {
+    "replyToken" : replyToken,
+    "notificationDisabled" : true,
+    "messages" : [
+      {
+        "type" : "template",
+        "altText" : "履歴を表示",
+        "template" : {
+          "type" : "buttons",
+          "title" : "履歴を表示",
+          "text" : "どちらか選んでね！",
+          "actions" :[
+            {
+              "type": "uri",
+              "label":"カレンダーで見る",
+              "uri": carendarUrl
+            },{
+              "type": "uri",
+              "label": "シートで一覧を見る",
+              "uri": spreadsheetUrl
+            }
+          ]
+        }
+      }
+    ]
+  };
+
+  var options = {
+    "method" : "post",
+    "headers" : header, 
+    "payload" : JSON.stringify(message)
+  };
+  UrlFetchApp.fetch(replyUrl, options);
+}
+
+
+
+
 
 // カルーセルテンプレートでReadMeを表示する機能
 function carouselTemplate(replyToken) {

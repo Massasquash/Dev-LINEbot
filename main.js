@@ -73,13 +73,11 @@ function getMessage(event, replyToken){
   // ユーザーから受け取ったメッセージにより処理を分岐（メニューから選択）
   if(messageText.match("おつかれさま！")){
     // WORK登録処理を進める
-    datetimePicker(replyToken);
+    selectDiary(replyToken);
     cache.remove("flag");
 
   }else if(messageText.match("履歴を見る")){
-    var msg1 = "カレンダー\n" + carendarUrl;
-    var msg2 = "シート\n" + spreadsheetUrl;
-    replyMessages(replyToken, msg1, msg2);
+    selectHistory(replyToken);
     cache.remove("flag");
 
   }else if(messageText.match("使い方を知りたい")){
