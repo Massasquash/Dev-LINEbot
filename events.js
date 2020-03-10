@@ -1,7 +1,7 @@
 //初期設定について：
 //initiallize()関数を実行してrichmenuを作成する（初期設定時に一度のみ）
 //取得したrichmenuIdがRICH_MENU_IDとしてスクリプトプロパティに自動記入されていることを確認
-//最後にwebUrlをスクリプトプロパティに記入する（手動）
+//最後にwebUrlをスクリプトプロパティ「WEB_URL」に記入する（手動）
 
 
 //webフォームからの入力に関する処理
@@ -26,7 +26,7 @@ function follow(event, replyToken){
     usersSheet.appendRow([userId]);
 
     var msg1 = "【農作業記録アシスタント】\n今日の作業をラインで入力！作業日誌を簡単に入力してGoogleカレンダーに登録するアプリ。\n使ってみた感想を教えてね\n\nまずは↓のページを開いて、自分用の「作業カテゴリ」を登録してみよう\n\n登録が終わったら画面一番下の「メニュー」を開いて「日報を入力」をタップしてみよう";
-    replyMessages(replyToken, msg1, webUrl);
+    replyMessages(replyToken, msg1, prop.WEB_URL);
 }
 
 
@@ -144,7 +144,7 @@ function getRichMenuId(){
         },
         "action":{
             "type" : "message",
-            "text" : "使い方を知りたい！"
+            "text" : "他にできることを教えて"
         }
       }
     ]

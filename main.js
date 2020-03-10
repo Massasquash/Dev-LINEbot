@@ -16,8 +16,6 @@ var historySheet      = spreadsheet.getSheetByName('作業履歴');
 var userSheet         = spreadsheet.getSheetByName('ユーザー設定');
 var categories        = getCategories('B5:B17');
 
-var webUrl = prop.WEB_URL;
-
 var eventExp =  /(.*?)\n([\s\S]*)/;
 
 
@@ -80,8 +78,8 @@ function getMessage(event, replyToken){
     selectHistory(replyToken);
     cache.remove("flag");
 
-  }else if(messageText.match("使い方を知りたい")){
-    carouselTemplate(replyToken);
+  }else if(messageText.match("他にできること")){
+    selectElse(replyToken);
     cache.remove("flag");
 
   } else {
@@ -177,6 +175,11 @@ function getPostback(event, replyToken){
     msg = "日報登録をキャンセルしたよ";
     reply(replyToken, msg);
     return;
+
+  //使い方カルーセルテンプレートを出す
+} else if(event.postback.data == "action=howto"){
+  sendHowtoTemplate(replyToken);
+  return; 
 
   //使い方カルーセルテンプレートの入力により分岐を処理
   } else if(readmeAry.indexOf(event.postback.data) >= 0){

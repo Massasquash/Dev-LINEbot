@@ -125,15 +125,15 @@ function selectDiary(replyToken){
                 {
                   "type": "postback",
                   "label":"さっきの日報を修正する",
-                  "data": "action=editdiary",
+                  "data": "action=editdiary"
                 },{
                   "type": "postback",
                   "label":"さっきの日報を取り消す",
-                  "data": "action=deletediary",
+                  "data": "action=deletediary"
                 },{
-                  "type" : "message",
+                  "type": "postback",
                   "label" : "過去の記録を編集する",
-                  "text": "Googleカレンダーから直接編集してください！"
+                  "data": "action=editcalendar"
                 }
               ]
             }
@@ -231,11 +231,47 @@ function selectHistory(replyToken){
 }
 
 
+// その他：カテゴリ編集と使い方のカルーセルテンプレート
+function selectElse(replyToken){
+  var message = {
+    "replyToken" : replyToken,
+    "notificationDisabled" : true,
+    "messages" : [
+      {
+        "type" : "template",
+        "altText" : "その他",
+        "template" : {
+          "type" : "buttons",
+          "title" : "その他",
+          "text" : "ここからは「カテゴリの編集」をしたり、「使い方」を見ることができるよ",
+          "actions" :[
+            {
+              "type": "uri",
+              "label":"作業カテゴリを編集する",
+              "uri": prop.WEB_URL
+            },{
+              "type": "postback",
+              "label": "使い方を見る",
+              "data": "action=howto"
+            }
+          ]
+        }
+      }
+    ]
+  };
+
+  var options = {
+    "method" : "post",
+    "headers" : header, 
+    "payload" : JSON.stringify(message)
+  };
+  UrlFetchApp.fetch(replyUrl, options);
+}
 
 
 
 // カルーセルテンプレートでReadMeを表示する機能
-function carouselTemplate(replyToken) {
+function sendHowtoTemplate(replyToken) {
 
   var message = {
     "replyToken" : replyToken,
