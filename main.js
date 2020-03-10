@@ -120,11 +120,9 @@ function getMessage(event, replyToken){
               return;
           }
           
-          outputLog("debug", "1", "");
           const [title, date, desc] = createDataForCalender(cache);
           const [year, month, day] = [date.getFullYear(), date.getMonth()+1, date.getDate()];
           const displayDate = year + "/" + month + "/" + day;
-          outputLog("debug", "2", "");
           let msg = "カレンダーに日報を登録したよ\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
 
           // カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
@@ -169,7 +167,25 @@ function getPostback(event, replyToken){
     reply(replyToken, msg);
     return;
 
-} else if(event.postback.data == "action=howto"){
+  } else if(event.postback.data == "action=editdiary"){
+    cache.removeAll(["flag", "date", "category", "title"]);
+    msg = "未実装だよ";
+    reply(replyToken, msg);
+    return; 
+
+  } else if(event.postback.data == "action=deletediary"){
+    cache.removeAll(["flag", "date", "category", "title"]);
+    msg = "未実装だよ";
+    reply(replyToken, msg);
+    return; 
+    
+  } else if(event.postback.data == "action=editcalendar"){
+    cache.removeAll(["flag", "date", "category", "title"]);
+    msg = "未実装だよ";
+    reply(replyToken, msg);
+    return; 
+
+  } else if(event.postback.data == "action=howto"){
   sendHowtoTemplate(replyToken);
   return; 
 
