@@ -2,7 +2,7 @@ var prop = PropertiesService.getScriptProperties().getProperties();
 
 //LINE Messagin apiパラメータ
 var replyUrl = "https://api.line.me/v2/bot/message/reply";
-var header = {
+var replyHeader = {
   "Content-Type" : "application/json",
   "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
 }
@@ -13,7 +13,7 @@ var header = {
 
 // ラインにメッセージを返す処理。
 function reply(replyToken, msg){
-  var message = {
+  const message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [
@@ -24,9 +24,9 @@ function reply(replyToken, msg){
     ]
   };
 
-  var options = {
+  const options = {
     "method" : "post",
-    "headers" : header,
+    "headers" : replyHeader,
     "payload" : JSON.stringify(message)
   };
 
@@ -36,7 +36,7 @@ function reply(replyToken, msg){
   
 // ラインに二つのメッセージを返す処理。
 function replyMessages(replyToken, msg1, msg2){
-  var message = {
+  const message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [{
@@ -49,9 +49,9 @@ function replyMessages(replyToken, msg1, msg2){
     ]
   };
 
-  var options = {
+  const options = {
     "method" : "post",
-    "headers" : header,
+    "headers" : replyHeader,
     "payload" : JSON.stringify(message)
   };
 
@@ -61,7 +61,7 @@ function replyMessages(replyToken, msg1, msg2){
 
 // // ラインにテキストメッセージと画像を送る処理。
 // function replyTextPicture(replyToken, msg, imgUrl, tmbUrl){
-//   var message = {
+//   const message = {
 //     "replyToken" : replyToken,
 //     "notificationDisabled" : true,
 //     "messages" : [{
@@ -75,9 +75,9 @@ function replyMessages(replyToken, msg1, msg2){
 //     ]
 //   };
 
-//   var options = {
+//   const options = {
 //     "method" : "post",
-//     "headers" : header,
+//     "headers" : replyHeader,
 //     "payload" : JSON.stringify(message)
 //   };
 
@@ -88,7 +88,7 @@ function replyMessages(replyToken, msg1, msg2){
 
 // 日誌を入力・編集：カルーセルテンプレートを出す。日時選択アクション含む
 function selectDiary(replyToken){
-  var message = {
+  const message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [
@@ -143,9 +143,9 @@ function selectDiary(replyToken){
     ]
   };
 
-  var options = {
+  const options = {
     "method" : "post",
-    "headers" : header, 
+    "headers" : replyHeader, 
     "payload" : JSON.stringify(message)
   };
   UrlFetchApp.fetch(replyUrl, options);
@@ -154,9 +154,8 @@ function selectDiary(replyToken){
 
 // クイックリプライを送信する処理
 function quickReply(replyToken, msg){
-  
-  var items = [];
-  for(var index in categories){
+  let items = [];
+  for(let index in categories){
     items.push(
       {
         "type" : "action",
@@ -169,7 +168,7 @@ function quickReply(replyToken, msg){
     );
   }
   
-  var message = {
+  const message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [
@@ -183,9 +182,9 @@ function quickReply(replyToken, msg){
     ]
   };
 
-  var options = {
+  const options = {
     "method" : "post",
-    "headers" : header,
+    "headers" : replyHeader,
     "payload" : JSON.stringify(message)
   };
 
@@ -195,7 +194,7 @@ function quickReply(replyToken, msg){
 
 // 履歴を見る：ボタンテンプレートを出してからURLアクションを送る処理
 function selectHistory(replyToken){
-  var message = {
+  const message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [
@@ -222,9 +221,9 @@ function selectHistory(replyToken){
     ]
   };
 
-  var options = {
+  const options = {
     "method" : "post",
-    "headers" : header, 
+    "headers" : replyHeader, 
     "payload" : JSON.stringify(message)
   };
   UrlFetchApp.fetch(replyUrl, options);
@@ -233,7 +232,7 @@ function selectHistory(replyToken){
 
 // その他：カテゴリ編集と使い方のカルーセルテンプレート
 function selectElse(replyToken){
-  var message = {
+  const message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [
@@ -260,9 +259,9 @@ function selectElse(replyToken){
     ]
   };
 
-  var options = {
+  const options = {
     "method" : "post",
-    "headers" : header, 
+    "headers" : replyHeader, 
     "payload" : JSON.stringify(message)
   };
   UrlFetchApp.fetch(replyUrl, options);
@@ -272,8 +271,7 @@ function selectElse(replyToken){
 
 // カルーセルテンプレートでReadMeを表示する機能
 function sendHowtoTemplate(replyToken) {
-
-  var message = {
+  const message = {
     "replyToken" : replyToken,
     "notificationDisabled" : true,
     "messages" : [
@@ -326,9 +324,9 @@ function sendHowtoTemplate(replyToken) {
     ]
   };
 
-  var options = {
+  const options = {
     "method" : "post",
-    "headers" : header, 
+    "headers" : replyHeader, 
     "payload" : JSON.stringify(message)
   };
   UrlFetchApp.fetch(replyUrl, options);
