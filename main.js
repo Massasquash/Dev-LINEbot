@@ -128,9 +128,9 @@ function getMessage(event, replyToken){
           // カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
           const option = { description: desc };
           const postEvent = calendar.createAllDayEvent(title, date, option);
-          historySheet.appendRow(
-            [displayDate, cache.get("category"), cache.get("title"), cache.get("desc"), postEvent.getId()]
-          );
+          // historySheet.appendRow(
+          //   [displayDate, cache.get("category"), cache.get("title"), cache.get("desc"), postEvent.getId()]
+          // );
           // カレンダー・シートへの登録処理ここまで
 
           reply(replyToken, msg);
@@ -238,4 +238,31 @@ function outputLog(text, label ,description){
     [new Date(), text, label ,description]
   );
   return;
+}
+
+
+
+
+
+
+
+function initialSync(){
+  const events = Calendar.Events.list(prop.CALENDAR_ID);
+  const nextSyncToken = events.nextSyncToken;
+  const properties = PropertiesService.getScriptProperties();
+  properties.setProperty("SYNC_TOKEN", nextSyncToken)
+}
+
+function onCalendarEdit(){
+  const properties = PropertiesService.getScriptProperties();
+  let nextSyncToken = properties.getProperty("SYNC_TOKEN");
+  const optionalArgs = {
+    syncToken: nextSyncToken
+  };
+  const events = Calendar.Events.list(prop.CALENDAR_ID, optionalArgs);
+ 
+  outputLog("onCalendarEdit", "events.items[0]" ,events.items[0]);
+
+  nextSyncToken = events["nextSyncToken"];
+  properties.setProperty("SYNC_TOKEN", nextSyncToken);
 }
