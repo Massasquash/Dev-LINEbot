@@ -128,9 +128,10 @@ function getMessage(event, replyToken){
           // カレンダー・シートへの登録処理。コーディング時はコメントアウト推奨
           const option = { description: desc };
           const postEvent = calendar.createAllDayEvent(title, date, option);
-          // historySheet.appendRow(
-          //   [displayDate, cache.get("category"), cache.get("title"), cache.get("desc"), postEvent.getId()]
-          // );
+          const postEventId = postEvent.getId();
+          historySheet.appendRow(
+            [displayDate, cache.get("category"), cache.get("title"), cache.get("desc"), postEventId.split("@")[0]]
+          );
           // カレンダー・シートへの登録処理ここまで
 
           reply(replyToken, msg);
