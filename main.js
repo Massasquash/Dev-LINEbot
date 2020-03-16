@@ -132,6 +132,7 @@ function getMessage(event, replyToken){
           historySheet.appendRow(
             [displayDate, cache.get("category"), cache.get("title"), cache.get("desc"), postEventId.split("@")[0]]
           );
+          onCalendarEdit();
           // カレンダー・シートへの登録処理ここまで
 
           reply(replyToken, msg);
@@ -261,9 +262,56 @@ function onCalendarEdit(){
     syncToken: nextSyncToken
   };
   const events = Calendar.Events.list(prop.CALENDAR_ID, optionalArgs);
- 
-  outputLog("onCalendarEdit", "events.items[0]" ,events.items[0]);
+  const event = events.items[0];
+
+  outputLog("onCalendarEdit", "events.items[0]" , event);
 
   nextSyncToken = events["nextSyncToken"];
   properties.setProperty("SYNC_TOKEN", nextSyncToken);
+
+  updateSpreadsheet(event);
+}
+
+
+
+function updateSpreadsheet(event){
+  const eventId = event.id;
+
+  let eventRow = getEventRow(eventId);
+
+  outputLog("eventRow", "" , eventRow);
+
+  switch(event.status){
+    case "confirmed":
+      if(eventRow = 0){
+        historySheet.appendRow(
+          [event.start[date], "", event.summary, "", event.id]
+        );
+        return;
+
+      } else {
+        const date = event.start.date;
+        const title = event.summary;
+        const desc = event.description;
+        outputLog("updateSpreadsheet", "events.items[0]" , date + " " + title + " " + desc);
+        return;
+      }
+    case "cancelled":
+      historySheet.deleteRow(eventRow+1);
+      break;
+  }
+
+
+}
+
+
+function getEventRow(eventId){
+  const lastRow = historySheet.getLastRow();
+  const dat = historySheet.getRange(1, 5, lastRow).getValues();
+  for(let i=1; i<lastRow; i++){
+    if(dat[i][0] === eventId){
+      return i;
+    }
+  }
+  return 0;
 }
