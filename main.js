@@ -205,8 +205,9 @@ function getPostback(event, replyToken){
 
 //Googleカレンダーに登録する情報を作る処理
 function createDataForCalender(cache){
-  let [_date, _category, _title, desc] = [cache.get("date"), cache.get("category"), cache.get("title") , cache.get("desc")];
-  title = "[" + _category + "]" + _title
+  const [_date, _category, _title, _desc] = [cache.get("date"), cache.get("category"), cache.get("title") , cache.get("desc")];
+  let [title, date, desc] = ["", "", _desc];
+  title = "[" + _category + "]" + _title;
   if(_date == "0"){
     date = new Date();
   } else {
@@ -255,6 +256,7 @@ function initialSync(){
   properties.setProperty("SYNC_TOKEN", nextSyncToken)
 }
 
+
 function onCalendarEdit(){
   const properties = PropertiesService.getScriptProperties();
   let nextSyncToken = properties.getProperty("SYNC_TOKEN");
@@ -283,21 +285,24 @@ function updateSpreadsheet(event){
 
   switch(event.status){
     case "confirmed":
-      if(eventRow = 0){
+      const inputData = [event.start.date, event.summary, event.description, event.id];
+      const [date, category, title, desc, id] = createDataForSpreadheet(inputData);
+      //イベント新規作成時
+      if(eventRow == 0){
         historySheet.appendRow(
-          [event.start[date], "", event.summary, "", event.id]
+          [date, category, title, desc, id]
         );
         return;
-
       } else {
-        const date = event.start.date;
-        const title = event.summary;
-        const desc = event.description;
-        outputLog("updateSpreadsheet", "events.items[0]" , date + " " + title + " " + desc);
+        //イベント編集時
+        historySheet.getRange(eventRow + 1, 1, 1, 5).setValues([
+          [date, category, title, desc, id]
+        ]);
         return;
       }
     case "cancelled":
-      historySheet.deleteRow(eventRow+1);
+      //イベント削除時
+      historySheet.deleteRow(eventRow + 1);
       break;
   }
 
@@ -314,4 +319,22 @@ function getEventRow(eventId){
     }
   }
   return 0;
+}
+
+
+//Spread Sheetに登録する情報を作る処理
+function createDataForSpreadheet(inputData){
+  const [_date, _title, _desc, _id] = inputData;
+  outputLog("1", "" , " ");
+  let [date, category, title, desc, id] = ["", "", "", _desc, _id];
+  outputLog("2", "" , " ");
+  date = _date.replace("-", "/").replace("-", "/");
+  if(_title.match("]")){
+    category = _title.split("]")[0].replace("[","");
+    title = _title.split("]")[1];
+  } else {
+    title = _title;
+  }
+  outputLog("3", "" , " ");
+  return [date, category, title, desc, id];
 }
