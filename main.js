@@ -1,22 +1,3 @@
-var prop = PropertiesService.getScriptProperties().getProperties();
-
-//マスタデータの読み込み
-var masterSpreadsheet = SpreadsheetApp.openById(prop.MASTER_SPREADSHEET_ID);
-var masterSheet       = masterSpreadsheet.getSheetByName('master');
-var logsSheet         = masterSpreadsheet.getSheetByName('logs');
-var usersSheet        = masterSpreadsheet.getSheetByName('users');
-var readmeMessages    = masterSheet.getRange('A2:C10').getValues();
-
-//ユーザーデータの読み込み
-var calendar          = CalendarApp.getCalendarById(prop.CALENDAR_ID);
-var carendarUrl       = prop.CALENDAR_URL;
-var spreadsheet       = SpreadsheetApp.getActiveSpreadsheet();
-var spreadsheetUrl    = spreadsheet.getUrl();
-var historySheet      = spreadsheet.getSheetByName('作業履歴');
-var userSheet         = spreadsheet.getSheetByName('ユーザー設定');
-var categories        = getCategories('B5:B17');
-
-
 function doPost(e) {
   //ポストデータがWEBフォームからのものか、LINEからのものか判定
   //パラメータのオブジェクトが空でない（キーの配列の長さが0でない）ならWEBフォームの処理へ
@@ -197,7 +178,7 @@ function getPostback(event, replyToken){
     return;
   }
 
-  cache.put("flag", 1)
+  cache.put("flag", 1);
   cache.put("date", date);
   quickReply(replyToken, msg);
 }
@@ -214,127 +195,4 @@ function createDataForCalender(cache){
     date = new Date(_date);
   }
   return [title, date, desc];
-}
-
-
-//ユーザーカテゴリー取得
-function getCategories(range){
-  const _categories = userSheet.getRange(range).getValues();
-  const categories = [];
-  for(let i in _categories){
-    if(_categories[i][0] == "") {
-      break;
-    } else {
-      categories[i] = _categories[i][0];
-    }
-  }
-  return categories;
-}
-
-
-
-
-
-//スプレッドシートにログを表示するためのもの
-function outputLog(text, label ,description){
-  logsSheet.appendRow(
-    [new Date(), text, label ,description]
-  );
-  return;
-}
-
-
-
-
-
-
-
-function initialSync(){
-  const events = Calendar.Events.list(prop.CALENDAR_ID);
-  const nextSyncToken = events.nextSyncToken;
-  const properties = PropertiesService.getScriptProperties();
-  properties.setProperty("SYNC_TOKEN", nextSyncToken)
-}
-
-
-function onCalendarEdit(){
-  const properties = PropertiesService.getScriptProperties();
-  let nextSyncToken = properties.getProperty("SYNC_TOKEN");
-  const optionalArgs = {
-    syncToken: nextSyncToken
-  };
-  const events = Calendar.Events.list(prop.CALENDAR_ID, optionalArgs);
-  const event = events.items[0];
-
-  outputLog("onCalendarEdit", "events.items[0]" , event);
-
-  nextSyncToken = events["nextSyncToken"];
-  properties.setProperty("SYNC_TOKEN", nextSyncToken);
-
-  updateSpreadsheet(event);
-}
-
-
-
-function updateSpreadsheet(event){
-  const eventId = event.id;
-
-  let eventRow = getEventRow(eventId);
-
-  outputLog("eventRow", "" , eventRow);
-
-  switch(event.status){
-    case "confirmed":
-      const inputData = [event.start.date, event.summary, event.description, event.id];
-      const [date, category, title, desc, id] = createDataForSpreadheet(inputData);
-      //イベント新規作成時
-      if(eventRow == 0){
-        historySheet.appendRow(
-          [date, category, title, desc, id]
-        );
-        return;
-      } else {
-        //イベント編集時
-        historySheet.getRange(eventRow + 1, 1, 1, 5).setValues([
-          [date, category, title, desc, id]
-        ]);
-        return;
-      }
-    case "cancelled":
-      //イベント削除時
-      historySheet.deleteRow(eventRow + 1);
-      break;
-  }
-
-
-}
-
-
-function getEventRow(eventId){
-  const lastRow = historySheet.getLastRow();
-  const dat = historySheet.getRange(1, 5, lastRow).getValues();
-  for(let i=1; i<lastRow; i++){
-    if(dat[i][0] === eventId){
-      return i;
-    }
-  }
-  return 0;
-}
-
-
-//Spread Sheetに登録する情報を作る処理
-function createDataForSpreadheet(inputData){
-  const [_date, _title, _desc, _id] = inputData;
-  outputLog("1", "" , " ");
-  let [date, category, title, desc, id] = ["", "", "", _desc, _id];
-  outputLog("2", "" , " ");
-  date = _date.replace("-", "/").replace("-", "/");
-  if(_title.match("]")){
-    category = _title.split("]")[0].replace("[","");
-    title = _title.split("]")[1];
-  } else {
-    title = _title;
-  }
-  outputLog("3", "" , " ");
-  return [date, category, title, desc, id];
 }
