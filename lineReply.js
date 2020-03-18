@@ -46,33 +46,6 @@ function replyMessages(replyToken, msg1, msg2){
 }
 
 
-// // ラインにテキストメッセージと画像を送る処理。
-// function replyTextPicture(replyToken, msg, imgUrl, tmbUrl){
-//   const message = {
-//     "replyToken" : replyToken,
-//     "notificationDisabled" : true,
-//     "messages" : [{
-//         "type" : "text",
-//         "text" : msg
-//       },{
-//         "type": "image",
-//         "originalContentUrl": imgUrl,
-//         "previewImageUrl": tmbUrl
-//       }
-//     ]
-//   };
-
-//   const options = {
-//     "method" : "post",
-//     "headers" : replyHeader,
-//     "payload" : JSON.stringify(message)
-//   };
-
-//   UrlFetchApp.fetch(replyUrl, options);
-// }
-
-
-
 // 日誌を入力・編集：カルーセルテンプレートを出す。日時選択アクション含む
 function selectDiary(replyToken){
   const message = {
@@ -139,8 +112,8 @@ function selectDiary(replyToken){
 }
 
 
-// クイックリプライを送信する処理
-function quickReply(replyToken, msg){
+// カテゴリ選択のクイックリプライを送信する処理
+function selectCategory(replyToken, msg){
   let items = [];
   for(let index in categories){
     items.push(
@@ -164,6 +137,50 @@ function quickReply(replyToken, msg){
         "text" : msg,
         "quickReply" :{
             "items" : items
+        }
+      }
+    ]
+  };
+
+  const options = {
+    "method" : "post",
+    "headers" : replyHeader,
+    "payload" : JSON.stringify(message)
+  };
+
+  UrlFetchApp.fetch(replyUrl, options);
+}
+
+
+//直前の投稿を削除する：はい/いいえのクイックリプライを送信する処理
+function confirmDeleteDiary(replyToken, msg){
+  const message = {
+    "replyToken" : replyToken,
+    "notificationDisabled" : true,
+    "messages" : [
+      {
+        "type" : "text",
+        "text" : msg,
+        "quickReply" :{
+          "items" : [
+            {
+              "type" : "action",
+              "action" :{
+                "type" : "postback",
+                "label" : "はい",
+                "data" : "action=exe_deletediary",
+                "displayText" : "直前の日報を取り消したよ"
+              }
+            },{
+              "type" : "action",
+              "action" :{
+                "type" : "postback",
+                "label" : "いいえ",
+                "data" : "action=cancel",
+                "displayText" : "やっぱりやめる"
+              }
+            }
+          ]
         }
       }
     ]

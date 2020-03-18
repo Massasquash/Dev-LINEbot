@@ -145,31 +145,41 @@ function getPostback(event, replyToken){
 
   } else if(event.postback.data == "action=cancel"){
     cache.removeAll(["flag", "date", "category", "title"]);
-    msg = "日報登録をキャンセルしたよ";
+    msg = "操作をキャンセルしたよ";
     reply(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=editdiary"){
-    cache.removeAll(["flag", "date", "category", "title"]);
     msg = "未実装だよ";
     reply(replyToken, msg);
     return; 
 
   } else if(event.postback.data == "action=deletediary"){
-    cache.removeAll(["flag", "date", "category", "title"]);
-    msg = "未実装だよ";
-    reply(replyToken, msg);
-    return; 
+    const lastRow = historySheet.getLastRow();
+    const event = historySheet.getRange(lastRow, 1, 1, 4).getValues();
+    const [date, title, desc] = [event[0][0], "[" + event[0][1] + "]" + event[0][2], event[0][3]];
+    if(date === "日付"){
+      msg = "日報がまだないよ。まずは「今日の日報を書く」から日報を登録してみてね！";
+      reply(replyToken, msg);
+      return;
+    }
+    msg = "直前に登録した日報はこれだよ。取り消しても大丈夫？\n\n◼️日付：${date}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${date}", date).replace("${title}", title).replace("${desc}", desc);
+    confirmDeleteDiary(replyToken, msg);
+    return;
+
+  } else if(event.postback.data == "action=exe_deletediary"){
+    const lastRow = historySheet.getLastRow();
+    historySheet.deleteRow(lastRow);
+    return;
     
   } else if(event.postback.data == "action=editcalendar"){
-    cache.removeAll(["flag", "date", "category", "title"]);
     msg = "未実装だよ";
     reply(replyToken, msg);
     return; 
 
   } else if(event.postback.data == "action=howto"){
-  sendHowtoTemplate(replyToken);
-  return; 
+    sendHowtoTemplate(replyToken);
+    return; 
 
   } else if(readmeAry.indexOf(event.postback.data) >= 0){
     msg = readmeMessages[readmeAry.indexOf(event.postback.data)][2];
@@ -179,7 +189,7 @@ function getPostback(event, replyToken){
 
   cache.put("flag", 1);
   cache.put("date", date);
-  quickReply(replyToken, msg);
+  selectCategory(replyToken, msg);
 }
 
 
@@ -194,18 +204,4 @@ function createDataForCalender(cache){
     date = new Date(_date);
   }
   return [title, date, desc];
-}
-
-//ユーザーカテゴリー取得
-function getCategories(range){
-  const _categories = userSheet.getRange(range).getValues();
-  const categories = [];
-  for(let i in _categories){
-    if(_categories[i][0] == "") {
-    break;
-    } else {
-    categories[i] = _categories[i][0];
-    }
-  }
-  return categories;
 }
