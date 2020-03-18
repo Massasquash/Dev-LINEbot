@@ -56,46 +56,28 @@ function selectDiary(replyToken){
         "type" : "template",
         "altText" : "日報の入力・編集",
         "template" : {
-          "type" : "carousel",
-          "columns" : [
+          "type" : "buttons",
+          "title" : "日報を入力する",
+          "text" : "日報を登録する？もし間違えちゃったら(3)を選んでから、もう一度登録し直してみてね。",
+          "actions" :[
             {
-              "title" : "日報を入力する",
-              "text" : "今日も一日お疲れさま！\n操作を選んでね",
-              "actions" :[
-                {
-                  "type": "postback",
-                  "label":"今日の日報を書く",
-                  "data": "action=today",
-                },{
-                  "type": "datetimepicker",
-                  "label": "日付を選んで日報を書く",
-                  "data": "action=settime",
-                  "mode": "date"
-                },{
-                  "type" : "postback",
-                  "label" : "やっぱりやめる",
-                  "data" : "action=cancel",
-                  "displayText": "やっぱりやめる"
-                }
-              ]
+              "type": "postback",
+              "label": "(1)今日の日報を書く",
+              "data": "action=today",
             },{
-              "title" : "日報を編集する",
-              "text" : "修正する？",
-              "actions" :[
-                {
-                  "type": "postback",
-                  "label":"さっきの日報を修正する",
-                  "data": "action=editdiary"
-                },{
-                  "type": "postback",
-                  "label":"さっきの日報を取り消す",
-                  "data": "action=deletediary"
-                },{
-                  "type": "postback",
-                  "label" : "過去の記録を編集する",
-                  "data": "action=editcalendar"
-                }
-              ]
+              "type": "datetimepicker",
+              "label": "(2)日付を選んで日報を書く",
+              "data": "action=settime",
+              "mode": "date"
+            },{
+              "type": "postback",
+              "label": "(3)直前の日報を取り消す",
+              "data": "action=deletediary"
+            },{
+              "type" : "postback",
+              "label" : "(4)やっぱりやめる",
+              "data" : "action=cancel",
+              "displayText": "やっぱりやめる"
             }
           ]
         }
@@ -208,15 +190,15 @@ function selectHistory(replyToken){
         "template" : {
           "type" : "buttons",
           "title" : "履歴を表示",
-          "text" : "どちらか選んでね！",
+          "text" : "ここから履歴を見ることができるよ。どちらか選んでね！",
           "actions" :[
             {
               "type": "uri",
-              "label":"カレンダーで見る",
+              "label":"(1)カレンダーで見る",
               "uri": carendarUrl
             },{
               "type": "uri",
-              "label": "シートで一覧を見る",
+              "label": "(2)シートで一覧を見る",
               "uri": spreadsheetUrl
             }
           ]
