@@ -156,20 +156,28 @@ function getPostback(event, replyToken){
 
   } else if(event.postback.data == "action=deletediary"){
     const lastRow = historySheet.getLastRow();
-    const event = historySheet.getRange(lastRow, 1, 1, 4).getValues();
-    const [date, title, desc] = [event[0][0], "[" + event[0][1] + "]" + event[0][2], event[0][3]];
-    if(date === "日付"){
+    const event = historySheet.getRange(lastRow, 1, 1, 5).getValues();
+    if(event[0][0] === "日付"){
       msg = "日報がまだないよ。まずは「今日の日報を書く」から日報を登録してみてね！";
       reply(replyToken, msg);
       return;
     }
-    msg = "直前に登録した日報はこれだよ。取り消しても大丈夫？\n\n◼️日付：${date}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${date}", date).replace("${title}", title).replace("${desc}", desc);
+    cache.put("eventId", event[0][4]);
+    const [year, month, day] = [event[0][0].getFullYear(), event[0][0].getMonth()+1, event[0][0].getDate()];
+    const displayDate = year + "/" + month + "/" + day;
+    const title = "[" + event[0][1] + "]" + event[0][2];
+    const desc = event[0][3];
+    msg = "直前に登録した日報はこれだよ。取り消しても大丈夫？\n\n◼️日付：${displayDate}\n◼️タイトル：${title}\n◼️詳細：${desc}".replace("${displayDate}", displayDate).replace("${title}", title).replace("${desc}", desc);
     confirmDeleteDiary(replyToken, msg);
     return;
 
   } else if(event.postback.data == "action=exe_deletediary"){
     const lastRow = historySheet.getLastRow();
     historySheet.deleteRow(lastRow);
+
+    const dayEvent = calendar.getEventById(cache.get("eventId") + "@google.com");
+    dayEvent.deleteEvent();
+    cache.remove("eventId");
     return;
     
   } else if(event.postback.data == "action=editcalendar"){

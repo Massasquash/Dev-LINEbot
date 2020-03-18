@@ -29,7 +29,6 @@ function follow(event, replyToken){
 }
 
 
-
 // 初期化処理
 //カレンダーイベント情報を保持するため
 function initialSync(){
@@ -56,14 +55,10 @@ function onCalendarEdit(){
 }
 
 
-
 function updateSpreadsheet(event){
   const eventId = event.id;
-
   let eventRow = getEventRow(eventId);
-
   outputLog("eventRow", "" , eventRow);
-
   switch(event.status){
     case "confirmed":
       const inputData = [event.start.date, event.summary, event.description, event.id];
@@ -83,7 +78,9 @@ function updateSpreadsheet(event){
       }
     case "cancelled":
       //イベント削除時
-      historySheet.deleteRow(eventRow + 1);
+      if(eventRow != 0){
+        historySheet.deleteRow(eventRow + 1);
+      }
       break;
   }
 }
@@ -103,9 +100,7 @@ function getEventRow(eventId){
 
 function createDataForSpreadheet(inputData){
   const [_date, _title, _desc, _id] = inputData;
-  outputLog("1", "" , " ");
   let [date, category, title, desc, id] = ["", "", "", _desc, _id];
-  outputLog("2", "" , " ");
   date = _date.replace("-", "/").replace("-", "/");
   if(_title.match("]")){
     category = _title.split("]")[0].replace("[","");
@@ -113,9 +108,12 @@ function createDataForSpreadheet(inputData){
   } else {
     title = _title;
   }
-  outputLog("3", "" , " ");
   return [date, category, title, desc, id];
 }
+
+
+
+
 
 
 

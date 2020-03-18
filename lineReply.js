@@ -169,7 +169,7 @@ function confirmDeleteDiary(replyToken, msg){
                 "type" : "postback",
                 "label" : "はい",
                 "data" : "action=exe_deletediary",
-                "displayText" : "直前の日報を取り消したよ"
+                "displayText" : "日報を取り消しました！"
               }
             },{
               "type" : "action",
