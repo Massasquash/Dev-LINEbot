@@ -29,8 +29,7 @@ function doPost(e) {
     reply(replyToken, "なんかおかしいよ。もう一度やってみてね\n");
     return;
   }
-
-};
+}
 
 
 
@@ -195,4 +194,18 @@ function createDataForCalender(cache){
     date = new Date(_date);
   }
   return [title, date, desc];
+}
+
+//ユーザーカテゴリー取得
+function getCategories(range){
+  const _categories = userSheet.getRange(range).getValues();
+  const categories = [];
+  for(let i in _categories){
+    if(_categories[i][0] == "") {
+    break;
+    } else {
+    categories[i] = _categories[i][0];
+    }
+  }
+  return categories;
 }

@@ -1,14 +1,3 @@
-//LINE Messagin apiパラメータ
-var replyUrl = "https://api.line.me/v2/bot/message/reply";
-var replyHeader = {
-  "Content-Type" : "application/json",
-  "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-}
-
-
-
-
-
 // ラインにメッセージを返す処理。
 function reply(replyToken, msg){
   const message = {
