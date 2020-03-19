@@ -200,6 +200,10 @@ function selectHistory(replyToken){
               "type": "uri",
               "label": "(2)シートで一覧を見る",
               "uri": spreadsheetUrl
+            },{
+              "type": "postback",
+              "label": "(3)日報を編集・削除したい",
+              "data": "action=howtoedit"
             }
           ]
         }
@@ -232,11 +236,15 @@ function selectElse(replyToken){
           "actions" :[
             {
               "type": "uri",
-              "label":"作業カテゴリを編集する",
+              "label":"(1)作業カテゴリを編集したい",
               "uri": prop.WEB_URL
             },{
               "type": "postback",
-              "label": "使い方を見る",
+              "label": "(2)カレンダーを編集したい",
+              "data": "action=editcalendar"
+            },{
+              "type": "postback",
+              "label": "(3)ヘルプを見る",
               "data": "action=howto"
             }
           ]

@@ -112,11 +112,12 @@ function getMessage(event, replyToken){
           historySheet.appendRow(
             [displayDate, cache.get("category"), cache.get("title"), cache.get("desc"), postEventId.split("@")[0]]
           );
+          cache.put("calendarFlag", 1);
           onCalendarEdit();
           // カレンダー・シートへの登録処理ここまで
 
           reply(replyToken, msg);
-          cache.removeAll(["flag", "date", "category", "title"]);
+          cache.removeAll(["flag", "date", "category", "title", "calendarFlag"]);
           break;
       }
     }
@@ -179,10 +180,17 @@ function getPostback(event, replyToken){
     dayEvent.deleteEvent();
     cache.remove("eventId");
     return;
-    
+
+  } else if(event.postback.data == "action=howtoedit"){
+    msg1 = "一度登録した日報を編集するには、\n(1)ライン上から直前の日報を取り消して再登録する方法\n(2)カレンダーから直接編集する方法\nの２種類があるよ！\n\n※シートの方は編集しないでね！";
+    msg2 = "(1)ライン上から直前の日報を取り消して再登録する方法\nメニューの一番左「日報を入力」をタップして「(3)直前の日報を取り消す」で、１個前に登録したものを消すことができるよ。その後、新たに日報を登録してね。\n\n(2)カレンダーから直接編集する方法\n昔の日報を編集したい場合は、Googleカレンダーから直接編集ができるよ。カレンダーを編集できるようにするには、メニューの一番右「その他」から「(2)カレンダーを編集する」を選んでね。";
+    replyMessages(replyToken, msg1, msg2);
+    return; 
+
   } else if(event.postback.data == "action=editcalendar"){
-    msg = "未実装だよ";
-    reply(replyToken, msg);
+    msg1 = "下のURLにアクセスして、自分のGoogle calendarに追加してみてね。自由に編集できるようになるはずだよ。";
+    msg2 = "https://www.google.com/calendar/render?cid=" + prop.CALENDAR_ID;
+    replyMessages(replyToken, msg1, msg2);
     return; 
 
   } else if(event.postback.data == "action=howto"){

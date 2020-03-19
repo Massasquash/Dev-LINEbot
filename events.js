@@ -9,6 +9,7 @@ function doGet(){
   return HtmlService.createTemplateFromFile("form").evaluate();
 }
 
+
 function postCategories(e) {
   const entryForm = ["category1", "category2", "category3", "category4", "category5", "category6", "category7", "category8", "category9", "category10", "category11", "category12" ,"category13"]
   
@@ -29,13 +30,8 @@ function follow(event, replyToken){
 }
 
 
-// 初期化処理
-//カレンダーイベント情報を保持するため
-function initialSync(){
-  const events = Calendar.Events.list(prop.CALENDAR_ID);
-  const nextSyncToken = events.nextSyncToken;
-  properties.setProperty("SYNC_TOKEN", nextSyncToken)
-}
+
+
 
 //カレンダーイベント編集
 function onCalendarEdit(){
@@ -51,14 +47,16 @@ function onCalendarEdit(){
   nextSyncToken = events["nextSyncToken"];
   properties.setProperty("SYNC_TOKEN", nextSyncToken);
 
-  updateSpreadsheet(event);
+  const cache = CacheService.getScriptCache();
+  if(!cache.get("calendarFlag")){
+    updateSpreadsheet(event);
+  }
 }
 
 
 function updateSpreadsheet(event){
   const eventId = event.id;
   let eventRow = getEventRow(eventId);
-  outputLog("eventRow", "" , eventRow);
   switch(event.status){
     case "confirmed":
       const inputData = [event.start.date, event.summary, event.description, event.id];
@@ -115,20 +113,25 @@ function createDataForSpreadheet(inputData){
 
 
 
-
-
-
-
-
 //以下、初期設定用
-//LINE messaging API リッチメニューに関する操作
+//LINE messaging API リッチメニューの設定・カレンダーイベント情報の初期化
 function initiallize(){
   outputLog("initiallize", "Start!", "");
+  initialSync();
+  outputLog("initiallize", "initialSync", "");
   const richMenuId = getRichMenuId();
   postRichMenuImage(richMenuId);
   setDefaultRichMenu(richMenuId);
   properties.setProperty("RICH_MENU_ID", richMenuId);
-  outputLog("initiallize", "Finish!");
+  outputLog("initiallize", "Finish!", "");
+}
+
+
+//カレンダーイベント情報の差分を取るためのトークンを取得
+function initialSync(){
+  const events = Calendar.Events.list(prop.CALENDAR_ID);
+  const nextSyncToken = events.nextSyncToken;
+  properties.setProperty("SYNC_TOKEN", nextSyncToken)
 }
 
 
@@ -145,9 +148,6 @@ function setDefaultRichMenu(richMenuId){
   UrlFetchApp.fetch(richMenuUrl, options); 
   outputLog("setDefaultRichMenu", "OK", richMenuId);
 }
-
-
-
 
 
 function postRichMenuImage(richMenuId){
@@ -167,7 +167,6 @@ function postRichMenuImage(richMenuId){
   const response = UrlFetchApp.fetch(richMenuUrl, options);
   outputLog("postRichMenuImage", "OK", response);
 }
-
 
 
 function getRichMenuId(){
