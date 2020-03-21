@@ -50,3 +50,7 @@ var replyHeader = {
   "Content-Type" : "application/json",
   "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
 }
+
+//リッチメニュー画像（GoogleDrive）
+var contentId  = "1BhjyI4AtZXJnmOohUcj70be8KrgFNqO-";
+var contentType = "image/png";

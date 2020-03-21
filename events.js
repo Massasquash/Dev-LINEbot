@@ -152,9 +152,6 @@ function setDefaultRichMenu(richMenuId){
 
 function postRichMenuImage(richMenuId){
   const richMenuUrl = "https://api-data.line.me/v2/bot/richmenu/" + richMenuId + "/content";
-  const content = "1QSrUQ3WJqhZvjoOq0rTB1WKEuW2hKjJR";
-  const contentType = "image/png";
-  const blob = DriveApp.getFileById(content).getBlob();
   const richMenuHeader = {
     "Content-Type" : contentType,
     "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
@@ -162,7 +159,7 @@ function postRichMenuImage(richMenuId){
   const options = {
     'headers': richMenuHeader,  
     'method': 'post',
-    'payload': blob
+    'payload': DriveApp.getFileById(contentId).getBlob()
   };
   const response = UrlFetchApp.fetch(richMenuUrl, options);
   outputLog("postRichMenuImage", "OK", response);
