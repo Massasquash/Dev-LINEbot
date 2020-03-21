@@ -236,7 +236,7 @@ function selectElse(replyToken){
           "actions" :[
             {
               "type": "uri",
-              "label":"(1)作業カテゴリを編集したい",
+              "label":"(1)作業カテゴリを編集する",
               "uri": prop.WEB_URL
             },{
               "type": "postback",

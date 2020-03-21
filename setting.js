@@ -52,5 +52,5 @@ var replyHeader = {
 }
 
 //リッチメニュー画像（GoogleDrive）
-var contentId  = "1BhjyI4AtZXJnmOohUcj70be8KrgFNqO-";
+var contentId  = "1Lsr9yhsDBaaO6xm8ITiHId-cmdyaqu26";
 var contentType = "image/png";
