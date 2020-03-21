@@ -119,6 +119,7 @@ function initiallize(){
   outputLog("initiallize", "Start!", "");
   initialSync();
   outputLog("initiallize", "initialSync", "");
+  unlinkRichMenu();
   const richMenuId = getRichMenuId();
   postRichMenuImage(richMenuId);
   setDefaultRichMenu(richMenuId);
@@ -135,37 +136,22 @@ function initialSync(){
 }
 
 
-//デフォルトメニューに設定する関数
-function setDefaultRichMenu(richMenuId){
-  const richMenuUrl = "https://api.line.me/v2/bot/user/all/richmenu/" + richMenuId ;
+//デフォルトのリッチメニューを解除
+function unlinkRichMenu(){
+  const richMenuUrl = "https://api.line.me/v2/bot/user/all/richmenu";
   const richMenuHeader = {
     "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
   };
   const options = {
-    'headers': richMenuHeader,
-    'method': 'post',
+    "headers": richMenuHeader,
+    "method": "delete"
   };
   UrlFetchApp.fetch(richMenuUrl, options); 
-  outputLog("setDefaultRichMenu", "OK", richMenuId);
+  outputLog("unlinkRichMenu", "OK", "");
 }
 
 
-function postRichMenuImage(richMenuId){
-  const richMenuUrl = "https://api-data.line.me/v2/bot/richmenu/" + richMenuId + "/content";
-  const richMenuHeader = {
-    "Content-Type" : contentType,
-    "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
-  };
-  const options = {
-    'headers': richMenuHeader,  
-    'method': 'post',
-    'payload': DriveApp.getFileById(contentId).getBlob()
-  };
-  const response = UrlFetchApp.fetch(richMenuUrl, options);
-  outputLog("postRichMenuImage", "OK", response);
-}
-
-
+//リッチメニューの作成
 function getRichMenuId(){
   const richMenuUrl = "https://api.line.me/v2/bot/richmenu";
   const richMenuHeader = {
@@ -218,12 +204,44 @@ function getRichMenuId(){
     ]
   };
   const options = {
-    'headers': richMenuHeader,  
-    'method': 'post',
-    'payload' : JSON.stringify(richMenuObject)
+    "headers": richMenuHeader,
+    "method": "post",
+    "payload": JSON.stringify(richMenuObject)
   };
   const response = UrlFetchApp.fetch(richMenuUrl, options);
   const richMenuId = JSON.parse(response).richMenuId;
   outputLog("getRichMenuId", "OK", richMenuId);
   return richMenuId;
+}
+
+
+//リッチメニューに画像をアップロード
+function postRichMenuImage(richMenuId){
+  const richMenuUrl = "https://api-data.line.me/v2/bot/richmenu/" + richMenuId + "/content";
+  const richMenuHeader = {
+    "Content-Type" : contentType,
+    "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
+  };
+  const options = {
+    "headers": richMenuHeader,  
+    "method": "post",
+    "payload": DriveApp.getFileById(contentId).getBlob()
+  };
+  const response = UrlFetchApp.fetch(richMenuUrl, options);
+  outputLog("postRichMenuImage", "OK", response);
+}
+
+
+//デフォルトメニューに設定する関数
+function setDefaultRichMenu(richMenuId){
+  const richMenuUrl = "https://api.line.me/v2/bot/user/all/richmenu/" + richMenuId ;
+  const richMenuHeader = {
+    "Authorization" : "Bearer " + prop.CHANNEL_ACCESS_TOKEN
+  };
+  const options = {
+    "headers": richMenuHeader,
+    "method": "post"
+  };
+  UrlFetchApp.fetch(richMenuUrl, options); 
+  outputLog("setDefaultRichMenu", "OK", richMenuId);
 }
